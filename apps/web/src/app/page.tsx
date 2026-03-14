@@ -3,9 +3,14 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAccount } from 'wagmi'
 import { useSepoliaGuard } from '../hooks/useSepoliaGuard'
 
+function shorten(address?: string) {
+  return address ? `${address.slice(0, 6)}...${address.slice(-4)}` : ''
+}
+
 export default function HomePage() {
   const { address, isConnected } = useAccount()
   const { isWrongNetwork, chainId } = useSepoliaGuard()
+  const short = shorten(address)
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -33,9 +38,13 @@ export default function HomePage() {
 
         <section className="rounded-xl border bg-white p-4">
           <h2 className="font-semibold mb-2">Wallet</h2>
-          <p className="text-sm text-gray-700">
-            {isConnected ? `Connected: ${address}` : 'Connect your wallet to continue.'}
-          </p>
+          {isConnected ? (
+            <p className="text-sm text-gray-700">
+              Connected: <span className="font-mono">{short}</span>
+            </p>
+          ) : (
+            <p className="text-sm text-gray-700">Disconnected. Connect your wallet to continue.</p>
+          )}
           {isWrongNetwork && (
             <p className="text-sm text-red-700 mt-1">Wrong network: switch to Sepolia (11155111)</p>
           )}
