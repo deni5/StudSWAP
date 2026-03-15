@@ -9,10 +9,10 @@ async function main() {
   const allowedBaseTokensAddress = "0xALLOWED_BASE_TOKENS_HERE";
 
   console.log("Deploying with:", deployer.address);
-  console.log("Owner:", initialOwner);
-  console.log("Factory:", factoryAddress);
-  console.log("Registry:", registryAddress);
-  console.log("AllowedBaseTokens:", allowedBaseTokensAddress);
+  console.log("initialOwner:", initialOwner);
+  console.log("factoryAddress:", factoryAddress);
+  console.log("registryAddress:", registryAddress);
+  console.log("allowedBaseTokensAddress:", allowedBaseTokensAddress);
 
   const Factory = await ethers.getContractFactory("PairLauncher");
   const contract = await Factory.deploy(
