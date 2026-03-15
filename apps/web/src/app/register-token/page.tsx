@@ -154,21 +154,21 @@ export default function RegisterTokenPage() {
   return (
     <main className="min-h-screen bg-slate-950 px-6 py-10 text-white">
       <div className="mx-auto max-w-4xl space-y-8">
-        <header className="space-y-3">
+        <header className="space-y-4">
           <h1 className="text-4xl font-bold">Register Token</h1>
           <p className="max-w-3xl text-slate-300">
             Register a student ERC-20 token in the StudSWAP registry and prepare
             it for future pool creation and market listing.
           </p>
+          <div>
+            <ConnectButton />
+          </div>
         </header>
 
         {(txState === "pending" ||
           txState === "success" ||
           txState === "failed") && (
-          <TxStatus
-            status={txState === "idle" ? "pending" : txState}
-            message={txMessage}
-          />
+          <TxStatus status={txState} message={txMessage} />
         )}
 
         <form
