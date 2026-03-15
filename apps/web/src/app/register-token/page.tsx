@@ -1,227 +1,140 @@
-'use client'
+"use client";
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState } from "react";
+import { useAccount } from "wagmi";
+import { parseUnits, isAddress } from "viem";
+import { useSepoliaGuard } from "../../hooks/useSepoliaGuard";
+import { useTokenRegistry } from "../../hooks/useTokenRegistry";
+import { TxStatus } from "../../components/tx-status";
+import {
+  STUDENT_TOKEN_REGISTRY_ADDRESS,
+  studentTokenRegistryAbi,
+} from "../../lib/contracts";
 
-const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/
-
-type FormState = {
-  tokenAddress: string
-  title: string
-  description: string
-  category: string
-  logoUrl: string
-  baseToken: string
-  bonusEnabled: boolean
-  rewardAsset: string
-}
-
-type FormErrors = Partial<Record<keyof FormState, string>>
+type TxState = "idle" | "pending" | "success" | "failed";
 
 export default function RegisterTokenPage() {
-  const [form, setForm] = useState<FormState>({
-    tokenAddress: '',
-    title: '',
-    description: '',
-    category: '',
-    logoUrl: '',
-    baseToken: '',
-    bonusEnabled: false,
-    rewardAsset: '',
-  })
+  const { address, isConnected } = useAccount();
+  const { isWrongNetwork } = useSepoliaGuard();
+  const { registerToken, isRegisterPending } = useTokenRegistry();
 
-  const [touched, setTouched] = useState<Record<keyof FormState, boolean>>({
-    tokenAddress: false,
-    title: false,
-    description: false,
-    category: false,
-    logoUrl: false,
-    baseToken: false,
-    bonusEnabled: false,
-    rewardAsset: false,
-  })
+  const [tokenAddress, setTokenAddress] = useState("");
+  const [title, setTitle] = useState("");
+  const [symbol, setSymbol] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [baseToken, setBaseToken] = useState("");
+  const [bonusEnabled, setBonusEnabled] = useState(false);
+  const [rewardAsset, setRewardAsset] = useState("");
+  const [bonusReserve, setBonusReserve] = useState("");
 
-  const errors = useMemo<FormErrors>(() => {
-    const next: FormErrors = {}
+  const [txState, setTxState] = useState<TxState>("idle");
+  const [txMessage, setTxMessage] = useState("");
 
-    if (!form.tokenAddress) next.tokenAddress = 'Token address is required'
-    else if (!ADDRESS_REGEX.test(form.tokenAddress)) next.tokenAddress = 'Token address must be a valid 0x... address'
+  const errors = useMemo(() => {
+    const result: Record<string, string> = {};
 
-    if (!form.title) next.title = 'Title is required'
-    if (!form.description) next.description = 'Description is required'
-    if (!form.category) next.category = 'Category is required'
-    if (!form.baseToken) next.baseToken = 'Base token is required'
-
-    if (form.bonusEnabled && form.rewardAsset && !ADDRESS_REGEX.test(form.rewardAsset)) {
-      next.rewardAsset = 'Reward asset must be a valid address'
+    if (!tokenAddress.trim()) {
+      result.tokenAddress = "Token address is required";
+    } else if (!isAddress(tokenAddress)) {
+      result.tokenAddress = "Invalid token address";
     }
 
-    return next
-  }, [form])
+    if (!title.trim()) result.title = "Title is required";
+    if (!symbol.trim()) result.symbol = "Symbol is required";
+    if (!description.trim()) result.description = "Description is required";
+    if (!category.trim()) result.category = "Category is required";
 
-  const isValid = Object.keys(errors).length === 0
+    if (!baseToken.trim()) {
+      result.baseToken = "Base token is required";
+    } else if (!isAddress(baseToken)) {
+      result.baseToken = "Invalid base token address";
+    }
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setTouched({
-      tokenAddress: true,
-      title: true,
-      description: true,
-      category: true,
-      logoUrl: true,
-      baseToken: true,
-      bonusEnabled: true,
-      rewardAsset: true,
-    })
+    if (bonusEnabled) {
+      if (!rewardAsset.trim()) {
+        result.rewardAsset = "Reward asset is required when bonus is enabled";
+      } else if (!isAddress(rewardAsset)) {
+        result.rewardAsset = "Invalid reward asset address";
+      }
 
-    if (!isValid) return
+      if (!bonusReserve.trim()) {
+        result.bonusReserve = "Bonus reserve is required when bonus is enabled";
+      } else {
+        const num = Number(bonusReserve);
+        if (Number.isNaN(num) || num < 0) {
+          result.bonusReserve = "Bonus reserve must be a valid positive number";
+        }
+      }
+    }
 
-    // TODO: wire to StudentTokenRegistry contract
-  }
+    if (!isConnected) {
+      result.wallet = "Connect wallet to continue";
+    }
 
-  const handleBlur = (key: keyof FormState) => () =>
-    setTouched((prev) => ({ ...prev, [key]: true }))
+    if (isWrongNetwork) {
+      result.network = "Switch to Sepolia to continue";
+    }
 
-  const handleChange = (key: keyof FormState) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const value =
-      e.target.type === 'checkbox'
-        ? (e.target as HTMLInputElement).checked
-        : e.target.value
+    if (
+      !STUDENT_TOKEN_REGISTRY_ADDRESS ||
+      STUDENT_TOKEN_REGISTRY_ADDRESS ===
+        "0x0000000000000000000000000000000000000000"
+    ) {
+      result.registry = "Registry contract address is not configured";
+    }
 
-    setForm((prev) => ({ ...prev, [key]: value }))
-  }
+    return result;
+  }, [
+    tokenAddress,
+    title,
+    symbol,
+    description,
+    category,
+    baseToken,
+    bonusEnabled,
+    rewardAsset,
+    bonusReserve,
+    isConnected,
+    isWrongNetwork,
+  ]);
 
-  const showError = (key: keyof FormState) =>
-    touched[key] && errors[key] ? (
-      <p className="text-xs text-red-600 mt  1">{errors[key]}</p>
-    ) : null
+  const isValid = Object.keys(errors).length === 0;
 
-  return (
-    <main className="min-h-screen bg-background text-foreground">
-      <section className="max-w-5xl mx-auto px-6 py-12">
-        <header className="mb-10">
-          <h1 className="text-3xl font-bold">Register Token</h1>
-          <p className="text-muted-foreground mt-2">
-            Add a student token to the platform registry.
-          </p>
-        </header>
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!isValid || !address) return;
 
-        <form className="space-y-4" onSubmit={onSubmit}>
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="block text-sm font-medium mb-1">Token address</label>
-              <input
-                className="w-full rounded-lg border px-3 py-2"
-                placeholder="0x..."
-                value={form.tokenAddress}
-                onChange={handleChange('tokenAddress')}
-                onBlur={handleBlur('tokenAddress')}
-              />
-              {showError('tokenAddress')}
-            </div>
+    try {
+      setTxState("pending");
+      setTxMessage("Submitting token registration transaction...");
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Title</label>
-              <input
-                className="w-full rounded-lg border px-3 py-2"
-                placeholder="Example Token"
-                value={form.title}
-                onChange={handleChange('title')}
-                onBlur={handleBlur('title')}
-              />
-              {showError('title')}
-            </div>
-          </div>
+      const reserveValue =
+        bonusEnabled && bonusReserve
+          ? parseUnits(bonusReserve, 18)
+          : BigInt(0);
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
-            <textarea
-              className="w-full rounded-lg border px-3 py-2"
-              placeholder="Short description..."
-              rows={3}
-              value={form.description}
-              onChange={handleChange('description')}
-              onBlur={handleBlur('description')}
-            />
-            {showError('description')}
-          </div>
+      await registerToken({
+        address: STUDENT_TOKEN_REGISTRY_ADDRESS,
+        abi: studentTokenRegistryAbi,
+        functionName: "registerToken",
+        args: [
+          tokenAddress as `0x${string}`,
+          title,
+          symbol,
+          description,
+          category,
+          logoUrl,
+          baseToken as `0x${string}`,
+          bonusEnabled,
+          bonusEnabled
+            ? (rewardAsset as `0x${string}`)
+            : ("0x0000000000000000000000000000000000000000" as `0x${string}`),
+          reserveValue,
+        ],
+      });
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="block text-sm font-medium mb-1">Category</label>
-              <input
-                className="w-full rounded-lg border px-3 py-2"
-                placeholder="Faculty / category"
-                value={form.category}
-                onChange={handleChange('category')}
-                onBlur={handleBlur('category')}
-              />
-              {showError('category')}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb  1">Logo URL</label>
-              <input
-                className="w-full rounded-lg border px-3 py-2"
-                placeholder="https://..."
-                value={form.logoUrl}
-                onChange={handleChange('logoUrl')}
-                onBlur={handleBlur('logoUrl')}
-              />
-              {showError('logoUrl')}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Base token</label>
-            <input
-              className="w-full rounded-lg border px-3 py-2"
-              placeholder="WETH / registered token address"
-              value={form.baseToken}
-              onChange={handleChange('baseToken')}
-              onBlur={handleBlur('baseToken')}
-            />
-            {showError('baseToken')}
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={form.bonusEnabled}
-                onChange={handleChange('bonusEnabled')}
-                onBlur={handleBlur('bonusEnabled')}
-              />
-              <span className="text-sm text-gray-700">Enable 30-day redeem with bonus</span>
-            </label>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Reward asset</label>
-              <input
-                className="w-full rounded-lg border px-3 py-2"
-                placeholder="0x... reward token address (optional)"
-                value={form.rewardAsset}
-                onChange={handleChange('rewardAsset')}
-                onBlur={handleBlur('rewardAsset')}
-              />
-              {showError('rewardAsset')}
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={!isValid}
-            className="mt-2 w-full rounded-lg bg-blue-600 text-white py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Submit (placeholder)
-          </button>
-
-          {!isValid && (
-            <p className="text-xs text-gray-500">Fill all required fields to enable submit.</p>
-          )}
-        </form>
-      </section>
-    </main>
-  )
-}
+      setTxState("success");
+      setTxMessage("Token registration transaction submitted successfully.");
+    } catch
