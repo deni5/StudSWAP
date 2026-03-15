@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useAccount } from "wagmi";
+import { sepolia } from "wagmi/chains";
 import { parseUnits, isAddress } from "viem";
 import { useSepoliaGuard } from "../../hooks/useSepoliaGuard";
 import { useTokenRegistry } from "../../hooks/useTokenRegistry";
