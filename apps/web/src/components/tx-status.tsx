@@ -1,19 +1,32 @@
-import React from 'react'
+"use client";
 
-export type TxStatusState = 'pending' | 'success' | 'failed'
+export type TxStatusKind = "pending" | "success" | "failed";
 
-export function TxStatus({ state }: { state: TxStatusState }) {
-  if (!state) return null
+export function TxStatus({
+  status,
+  message,
+}: {
+  status: TxStatusKind;
+  message?: string;
+}) {
+  const styles =
+    status === "pending"
+      ? "border-yellow-700 bg-yellow-950/40 text-yellow-300"
+      : status === "success"
+      ? "border-green-700 bg-green-950/40 text-green-300"
+      : "border-red-700 bg-red-950/40 text-red-300";
 
-  const label = state === 'pending' ? 'Pending' : state === 'success' ? 'Success' : 'Failed'
-  const color =
-    state === 'pending' ? 'bg-yellow-50 text-yellow-900 border-yellow-200' :
-    state === 'success' ? 'bg-green-50 text-green-900 border-green-200' :
-    'bg-red-50 text-red-900 border-red-200'
+  const label =
+    status === "pending"
+      ? "Pending"
+      : status === "success"
+      ? "Success"
+      : "Failed";
 
   return (
-    <div className={`rounded-md border px-3 py-2 text-sm ${color}`}>
-      Tx status: {label}
+    <div className={`rounded-xl border p-4 ${styles}`}>
+      <p className="font-semibold">Transaction status: {label}</p>
+      {message && <p className="mt-2 text-sm">{message}</p>}
     </div>
-  )
+  );
 }
