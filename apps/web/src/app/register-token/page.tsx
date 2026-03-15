@@ -65,7 +65,8 @@ export default function RegisterTokenPage() {
       } else {
         const num = Number(bonusReserve);
         if (Number.isNaN(num) || num < 0) {
-          result.bonusReserve = "Bonus reserve must be a valid positive number";
+          result.bonusReserve =
+            "Bonus reserve must be a valid positive number";
         }
       }
     }
@@ -117,33 +118,35 @@ export default function RegisterTokenPage() {
           : BigInt(0);
 
       await registerToken({
-  address: STUDENT_TOKEN_REGISTRY_ADDRESS,
-  abi: studentTokenRegistryAbi,
-  functionName: "registerToken",
-  account: address as `0x${string}`,
-  chain: sepolia,
-  args: [
-    tokenAddress as `0x${string}`,
-    title,
-    symbol,
-    description,
-    category,
-    logoUrl,
-    baseToken as `0x${string}`,
-    bonusEnabled,
-    bonusEnabled
-      ? (rewardAsset as `0x${string}`)
-      : ("0x0000000000000000000000000000000000000000" as `0x${string}`),
-    reserveValue,
-  ],
-});
+        address: STUDENT_TOKEN_REGISTRY_ADDRESS,
+        abi: studentTokenRegistryAbi,
+        functionName: "registerToken",
+        account: address as `0x${string}`,
+        chain: sepolia,
+        args: [
+          tokenAddress as `0x${string}`,
+          title,
+          symbol,
+          description,
+          category,
+          logoUrl,
+          baseToken as `0x${string}`,
+          bonusEnabled,
+          bonusEnabled
+            ? (rewardAsset as `0x${string}`)
+            : ("0x0000000000000000000000000000000000000000" as `0x${string}`),
+          reserveValue,
+        ],
+      });
 
       setTxState("success");
       setTxMessage("Token registration transaction submitted successfully.");
     } catch (error) {
       console.error(error);
       setTxState("failed");
-      setTxMessage("Token registration failed. Please review the inputs and try again.");
+      setTxMessage(
+        "Token registration failed. Please review the inputs and try again."
+      );
     }
   }
 
@@ -158,8 +161,13 @@ export default function RegisterTokenPage() {
           </p>
         </header>
 
-        {(txState === "pending" || txState === "success" || txState === "failed") && (
-          <TxStatus status={txState === "idle" ? "pending" : txState} message={txMessage} />
+        {(txState === "pending" ||
+          txState === "success" ||
+          txState === "failed") && (
+          <TxStatus
+            status={txState === "idle" ? "pending" : txState}
+            message={txMessage}
+          />
         )}
 
         <form
@@ -167,12 +175,48 @@ export default function RegisterTokenPage() {
           className="space-y-6 rounded-2xl border border-slate-800 bg-slate-900 p-6"
         >
           <div className="grid gap-5 md:grid-cols-2">
-            <Field label="Token address" value={tokenAddress} onChange={setTokenAddress} placeholder="0x..." error={errors.tokenAddress} />
-            <Field label="Title" value={title} onChange={setTitle} placeholder="Student Token" error={errors.title} />
-            <Field label="Symbol" value={symbol} onChange={setSymbol} placeholder="STUD" error={errors.symbol} />
-            <Field label="Category" value={category} onChange={setCategory} placeholder="Education" error={errors.category} />
-            <Field label="Logo URL" value={logoUrl} onChange={setLogoUrl} placeholder="https://..." error={errors.logoUrl} />
-            <Field label="Base token" value={baseToken} onChange={setBaseToken} placeholder="0x..." error={errors.baseToken} />
+            <Field
+              label="Token address"
+              value={tokenAddress}
+              onChange={setTokenAddress}
+              placeholder="0x..."
+              error={errors.tokenAddress}
+            />
+            <Field
+              label="Title"
+              value={title}
+              onChange={setTitle}
+              placeholder="Student Token"
+              error={errors.title}
+            />
+            <Field
+              label="Symbol"
+              value={symbol}
+              onChange={setSymbol}
+              placeholder="STUD"
+              error={errors.symbol}
+            />
+            <Field
+              label="Category"
+              value={category}
+              onChange={setCategory}
+              placeholder="Education"
+              error={errors.category}
+            />
+            <Field
+              label="Logo URL"
+              value={logoUrl}
+              onChange={setLogoUrl}
+              placeholder="https://..."
+              error={errors.logoUrl}
+            />
+            <Field
+              label="Base token"
+              value={baseToken}
+              onChange={setBaseToken}
+              placeholder="0x..."
+              error={errors.baseToken}
+            />
           </div>
 
           <Field
@@ -186,15 +230,31 @@ export default function RegisterTokenPage() {
 
           <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
             <label className="flex items-center gap-3">
-              <input type="checkbox" checked={bonusEnabled} onChange={(e) => setBonusEnabled(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={bonusEnabled}
+                onChange={(e) => setBonusEnabled(e.target.checked)}
+              />
               <span className="font-medium">Enable 30-day redeem bonus</span>
             </label>
           </div>
 
           {bonusEnabled && (
             <div className="grid gap-5 md:grid-cols-2">
-              <Field label="Reward asset" value={rewardAsset} onChange={setRewardAsset} placeholder="0x..." error={errors.rewardAsset} />
-              <Field label="Bonus reserve" value={bonusReserve} onChange={setBonusReserve} placeholder="1000" error={errors.bonusReserve} />
+              <Field
+                label="Reward asset"
+                value={rewardAsset}
+                onChange={setRewardAsset}
+                placeholder="0x..."
+                error={errors.rewardAsset}
+              />
+              <Field
+                label="Bonus reserve"
+                value={bonusReserve}
+                onChange={setBonusReserve}
+                placeholder="1000"
+                error={errors.bonusReserve}
+              />
             </div>
           )}
 
