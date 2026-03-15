@@ -1,6 +1,10 @@
 export const STUDENT_TOKEN_REGISTRY_ADDRESS =
   process.env.NEXT_PUBLIC_STUDENT_TOKEN_REGISTRY_ADDRESS as `0x${string}`;
 
+export const PAIR_LAUNCHER_ADDRESS =
+  (process.env.NEXT_PUBLIC_PAIR_LAUNCHER_ADDRESS ||
+    "0x0000000000000000000000000000000000000000") as `0x${string}`;
+
 export const studentTokenRegistryAbi = [
   {
     type: "function",
@@ -73,6 +77,59 @@ export const studentTokenRegistryAbi = [
         ],
         name: "",
         type: "tuple"
+      }
+    ]
+  }
+] as const;
+
+export const pairLauncherAbi = [
+  {
+    type: "function",
+    name: "launchPair",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "token", type: "address" },
+      { name: "baseToken", type: "address" }
+    ],
+    outputs: [{ name: "pair", type: "address" }]
+  },
+  {
+    type: "function",
+    name: "pairExists",
+    stateMutability: "view",
+    inputs: [
+      { name: "token", type: "address" },
+      { name: "baseToken", type: "address" }
+    ],
+    outputs: [{ name: "", type: "bool" }]
+  },
+  {
+    type: "function",
+    name: "getExistingPair",
+    stateMutability: "view",
+    inputs: [
+      { name: "token", type: "address" },
+      { name: "baseToken", type: "address" }
+    ],
+    outputs: [{ name: "", type: "address" }]
+  },
+  {
+    type: "function",
+    name: "getAllPairRecords",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [
+      {
+        components: [
+          { name: "token", type: "address" },
+          { name: "baseToken", type: "address" },
+          { name: "pair", type: "address" },
+          { name: "creator", type: "address" },
+          { name: "createdAt", type: "uint256" },
+          { name: "exists", type: "bool" }
+        ],
+        name: "",
+        type: "tuple[]"
       }
     ]
   }
