@@ -117,24 +117,26 @@ export default function RegisterTokenPage() {
           : BigInt(0);
 
       await registerToken({
-        address: STUDENT_TOKEN_REGISTRY_ADDRESS,
-        abi: studentTokenRegistryAbi,
-        functionName: "registerToken",
-        args: [
-          tokenAddress as `0x${string}`,
-          title,
-          symbol,
-          description,
-          category,
-          logoUrl,
-          baseToken as `0x${string}`,
-          bonusEnabled,
-          bonusEnabled
-            ? (rewardAsset as `0x${string}`)
-            : ("0x0000000000000000000000000000000000000000" as `0x${string}`),
-          reserveValue,
-        ],
-      });
+  address: STUDENT_TOKEN_REGISTRY_ADDRESS,
+  abi: studentTokenRegistryAbi,
+  functionName: "registerToken",
+  account: address as `0x${string}`,
+  chain: sepolia,
+  args: [
+    tokenAddress as `0x${string}`,
+    title,
+    symbol,
+    description,
+    category,
+    logoUrl,
+    baseToken as `0x${string}`,
+    bonusEnabled,
+    bonusEnabled
+      ? (rewardAsset as `0x${string}`)
+      : ("0x0000000000000000000000000000000000000000" as `0x${string}`),
+    reserveValue,
+  ],
+});
 
       setTxState("success");
       setTxMessage("Token registration transaction submitted successfully.");
