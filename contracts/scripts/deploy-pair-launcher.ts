@@ -3,29 +3,26 @@ import { ethers } from "hardhat";
 async function main() {
   const [deployer] = await ethers.getSigners();
 
-  const initialOwner = deployer.address;
-  const factoryAddress = "0xFACTORY_HERE";
-  const registryAddress = "0x731A9095F79b1F7D335eF741281ac35eC84B8d0a";
-  const allowedBaseTokensAddress = "0xALLOWED_BASE_TOKENS_HERE";
-
   console.log("Deploying with:", deployer.address);
-  console.log("initialOwner:", initialOwner);
-  console.log("factoryAddress:", factoryAddress);
-  console.log("registryAddress:", registryAddress);
-  console.log("allowedBaseTokensAddress:", allowedBaseTokensAddress);
 
-  const Factory = await ethers.getContractFactory("PairLauncher");
-  const contract = await Factory.deploy(
+  const initialOwner = deployer.address;
+
+  // ВСТАВ СЮДИ РЕАЛЬНІ АДРЕСИ ВЖЕ ЗАДЕПЛОЄНИХ КОНТРАКТІВ У SEPOLIA
+  const factoryAddress = "0xYourFactoryAddress";
+  const registryAddress = "0xYourRegistryAddress";
+  const allowedBaseTokensAddress = "0xYourAllowedBaseTokensAddress";
+
+  const PairLauncher = await ethers.getContractFactory("PairLauncher");
+  const pairLauncher = await PairLauncher.deploy(
     initialOwner,
     factoryAddress,
     registryAddress,
     allowedBaseTokensAddress
   );
 
-  await contract.waitForDeployment();
+  await pairLauncher.waitForDeployment();
 
-  const address = await contract.getAddress();
-  console.log("PairLauncher deployed to:", address);
+  console.log("PairLauncher deployed to:", await pairLauncher.getAddress());
 }
 
 main().catch((error) => {
