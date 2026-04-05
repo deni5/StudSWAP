@@ -27,3 +27,4 @@ export function useTokenRegistry() {
     isRegisterPending: isPending,
   };
 }
+
