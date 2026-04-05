@@ -1,90 +1,153 @@
-export default function TokensPage() {
-  const tokens = [
-    {
-      symbol: "DPT",
-      name: "DeFiLab Points",
-      address: "0x1111111111111111111111111111111111111111",
-      status: "verified",
-    },
-    {
-      symbol: "STU",
-      name: "Student Token",
-      address: "0x2222222222222222222222222222222222222222",
-      status: "unverified",
-    },
-  ]
+"use client";
 
-  const hasTokens = tokens.length > 0
+import Link from "next/link";
+import { useTokenRegistry } from "../../hooks/useTokenRegistry";
+
+type RegistryToken = {
+  token: string;
+  creator: string;
+  title: string;
+  symbol: string;
+  description: string;
+  category: string;
+  logoUrl: string;
+  baseToken: string;
+  bonusEnabled: boolean;
+  rewardAsset: string;
+  bonusReserve: bigint;
+  createdAt: bigint;
+  status: number;
+  exists: boolean;
+};
+
+function shortenAddress(value?: string) {
+  if (!value) return "";
+  return `${value.slice(0, 6)}...${value.slice(-4)}`;
+}
+
+function statusLabel(status: number) {
+  switch (status) {
+    case 0:
+      return "Draft";
+    case 1:
+      return "Registered";
+    case 2:
+      return "Pool Created";
+    case 3:
+      return "Tradable";
+    case 4:
+      return "Hidden";
+    case 5:
+      return "Blocked";
+    default:
+      return "Unknown";
+  }
+}
+
+export default function TokensPage() {
+  const { allTokensQuery } = useTokenRegistry();
+
+  const tokens = (allTokensQuery.data || []) as RegistryToken[];
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <section className="max-w-5xl mx-auto px-6 py-12">
-        <header className="mb-10">
-          <h1 className="text-3xl font-bold">Tokens</h1>
-          <p className="text-muted-foreground mt-2">
-            Registered student tokens on the platform.
+    <main className="min-h-screen bg-slate-950 px-6 py-10 text-white">
+      <div className="mx-auto max-w-6xl space-y-8">
+        <header className="space-y-3">
+          <h1 className="text-4xl font-bold">Registered Tokens</h1>
+          <p className="max-w-3xl text-slate-300">
+            Browse student ERC-20 tokens already registered in the StudSWAP
+            on-chain registry.
           </p>
         </header>
 
-        <div className="space-y-6">
-          <div className="flex flex-col gap-4 rounded-xl border bg-card p-6">
-            <div>
-              <label className="text-sm font-semibold">Search</label>
-              <input
-                className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
-                placeholder="Search by symbol or address..."
-              />
-            </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
-              <div className="space-x-2">
-                <span className="font-semibold">Status:</span>
-                <span className="rounded-full border px-3 py-1 text-xs">All</span>
-                <span className="rounded-full border px-3 py-1 text-xs">Verified</span>
-                <span className="rounded-full border px-3 py-1 text-xs">Unverified</span>
-              </div>
-
-              <div className="text-muted-foreground">Mock data placeholder</div>
-            </div>
-          </div>
-
-          <div className="rounded-xl border bg-card p-6">
-            <p className="font-semibold mb-2">Token list</p>
-
-            {!hasTokens ? (
-              <div className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
-                No tokens registered yet.
-              </div>
-            ) : (
-              <div className="overflow-hidden rounded-lg border">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-muted">
-                    <tr>
-                      <th className="px-3 py-2">Symbol</th>
-                      <th className="px-3 py-2">Name</th>
-                      <th className="px-3 py-2">Address</th>
-                      <th className="px-3 py-2">Status</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {tokens.map((t) => (
-                      <tr key={t.address} className="border-t">
-                        <td className="px-3 py-2 font-semibold">{t.symbol}</td>
-                        <td className="px-3 py-2">{t.name}</td>
-                        <td className="px-3 py-2 text-xs font-mono">{t.address}</td>
-                        <td className="px-3 py-2">
-                          <span className="rounded-full border px-3 py-1 text-xs">{t.status}</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/register-token"
+            className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-500"
+          >
+            Register New Token
+          </Link>
         </div>
-      </section>
+
+        {allTokensQuery.isLoading && (
+          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-slate-300">
+            Loading registered tokens...
+          </div>
+        )}
+
+        {allTokensQuery.isError && (
+          <div className="rounded-2xl border border-red-800 bg-red-950/40 p-6 text-red-300">
+            Failed to load tokens from the registry.
+          </div>
+        )}
+
+        {!allTokensQuery.isLoading && !allTokensQuery.isError && tokens.length === 0 && (
+          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 text-slate-300">
+            No registered tokens yet.
+          </div>
+        )}
+
+        {tokens.length > 0 && (
+          <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead className="bg-slate-800/70 text-slate-300">
+                  <tr>
+                    <th className="px-4 py-3 text-left">Symbol</th>
+                    <th className="px-4 py-3 text-left">Title</th>
+                    <th className="px-4 py-3 text-left">Token</th>
+                    <th className="px-4 py-3 text-left">Creator</th>
+                    <th className="px-4 py-3 text-left">Base Token</th>
+                    <th className="px-4 py-3 text-left">Bonus</th>
+                    <th className="px-4 py-3 text-left">Status</th>
+                    <th className="px-4 py-3 text-left">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tokens.map((item) => (
+                    <tr
+                      key={item.token}
+                      className="border-t border-slate-800 text-slate-200"
+                    >
+                      <td className="px-4 py-4 font-medium">{item.symbol}</td>
+                      <td className="px-4 py-4">{item.title}</td>
+                      <td className="px-4 py-4 font-mono text-xs">
+                        {shortenAddress(item.token)}
+                      </td>
+                      <td className="px-4 py-4 font-mono text-xs">
+                        {shortenAddress(item.creator)}
+                      </td>
+                      <td className="px-4 py-4 font-mono text-xs">
+                        {shortenAddress(item.baseToken)}
+                      </td>
+                      <td className="px-4 py-4">
+                        {item.bonusEnabled
+                          ? `Yes (${item.bonusReserve.toString()})`
+                          : "No"}
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className="rounded-full border border-slate-600 px-3 py-1 text-xs">
+                          {statusLabel(item.status)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <Link
+                          href={`/token/${item.token}`}
+                          className="rounded-lg border border-slate-600 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800"
+                        >
+                          View
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
     </main>
-  )
+  );
 }
+
+
