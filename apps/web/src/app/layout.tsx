@@ -1,12 +1,10 @@
+"use client";
+
 import type { Metadata } from "next";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import "./globals.css";
 import Providers from "./providers";
-
-export const metadata: Metadata = {
-  title: "StudSWAP",
-  description: "StudSWAP MVP DEX platform for student ERC-20 tokens on Sepolia.",
-};
 
 const navItems = [
   { href: "/tokens", label: "Tokens" },
@@ -17,6 +15,28 @@ const navItems = [
   { href: "/vault", label: "Vault" },
   { href: "/portfolio", label: "Portfolio" },
 ];
+
+function Nav() {
+  const pathname = usePathname();
+  return (
+    <nav className="hidden md:flex items-center gap-1">
+      {navItems.map((item) => {
+        const isActive = pathname === item.href;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={"rounded-lg px-3 py-2 text-sm font-medium transition-colors " + (isActive
+              ? "bg-blue-50 text-blue-600 font-semibold"
+              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900")}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
 
 export default function RootLayout({
   children,
@@ -34,17 +54,7 @@ export default function RootLayout({
                   <span className="text-xl font-bold text-blue-600">StudSWAP</span>
                   <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">Sepolia</span>
                 </Link>
-                <nav className="hidden md:flex items-center gap-1">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </nav>
+                <Nav />
               </div>
             </header>
             <main className="flex-1">{children}</main>
