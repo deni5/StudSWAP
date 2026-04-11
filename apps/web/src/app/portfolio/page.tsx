@@ -1,6 +1,5 @@
 "use client";
 
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useReadContract, useReadContracts } from "wagmi";
 import { formatUnits } from "viem";
 import Link from "next/link";
@@ -170,7 +169,6 @@ export default function PortfolioPage() {
         <p className="text-slate-500 max-w-2xl">
           Your token balances, LP positions, and vault holdings on Sepolia.
         </p>
-        <ConnectButton />
       </header>
 
       {!isConnected ? (

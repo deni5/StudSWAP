@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import {
@@ -77,7 +76,6 @@ export default function CreatePoolPage() {
         <p className="text-slate-500 max-w-2xl">
           Create a Uniswap V2 liquidity pool between a registered student token and an allowed base token.
         </p>
-        <ConnectButton />
       </header>
 
       <div className="grid gap-6 md:grid-cols-3">

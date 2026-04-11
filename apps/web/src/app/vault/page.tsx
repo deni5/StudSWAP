@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
   useAccount,
   useReadContract,
@@ -210,7 +209,6 @@ export default function VaultPage() {
         <p className="text-slate-500 max-w-2xl">
           Lock LP tokens into the vault, receive receipt tokens, and redeem after the 30-day lock period.
         </p>
-        <ConnectButton />
       </header>
 
       <div className="grid gap-4 md:grid-cols-3">

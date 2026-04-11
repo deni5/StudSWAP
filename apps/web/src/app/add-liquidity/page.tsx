@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
   useAccount,
   useReadContract,
@@ -246,7 +245,6 @@ export default function AddLiquidityPage() {
         <p className="text-slate-500 max-w-2xl">
           Add liquidity to an existing Uniswap V2 pool. Both tokens must be approved before adding.
         </p>
-        <ConnectButton />
       </header>
 
       <div className="grid gap-6 md:grid-cols-3">

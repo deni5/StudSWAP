@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
   useAccount,
   useReadContract,
   useWriteContract,
   useWaitForTransactionReceipt,
+  useBalance,
 } from "wagmi";
 import { parseUnits, formatUnits } from "viem";
 import { sepolia } from "wagmi/chains";
@@ -122,6 +122,8 @@ export default function SwapPage() {
     query: { enabled: (!!tokenIn && !!address) },
   });
 
+  const { data: nativeBalance } = useBalance({ address: address, query: { enabled: !!address } });
+
   const { data: balanceIn } = useReadContract({
     address: tokenIn as `0x${string}`,
     abi: erc20Abi,
@@ -186,7 +188,6 @@ export default function SwapPage() {
       <header className="space-y-3">
         <h1 className="text-3xl font-bold text-slate-800">Swap</h1>
         <p className="text-slate-500">Exchange student tokens via Uniswap V2 pools on Sepolia.</p>
-        <ConnectButton />
       </header>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
@@ -209,9 +210,10 @@ export default function SwapPage() {
             placeholder="0.0"
             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
           />
-          {balanceIn !== undefined && (
-            <p className="text-xs text-slate-400">Balance: {formatUnits(balanceIn as bigint, 18)} {tokenInLabel}</p>
-          )}
+          {tokenIn === WETH_ADDRESS
+            ? nativeBalance && <p className="text-xs text-slate-400">Balance: {parseFloat(nativeBalance.formatted).toFixed(4)} ETH</p>
+            : balanceIn !== undefined && <p className="text-xs text-slate-400">Balance: {formatUnits(balanceIn as bigint, 18)} {tokenInLabel}</p>
+          }
         </div>
 
         <div className="flex justify-center">
