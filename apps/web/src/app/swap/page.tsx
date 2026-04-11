@@ -102,7 +102,7 @@ export default function SwapPage() {
     ...tokens.map((t) => ({ token: t.token, symbol: t.symbol, title: t.title })),
   ];
 
-  const amountInWei = amountIn && tokenIn ? parseUnits(amountIn, 18) : BigInt(0);
+  const amountInWei = amountIn && tokenIn && parseFloat(amountIn) > 0 ? parseUnits(amountIn, 18) : BigInt(0);
 
   const { data: amountsOut } = useReadContract({
     address: UNISWAP_V2_ROUTER,

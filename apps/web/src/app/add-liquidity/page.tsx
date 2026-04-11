@@ -144,8 +144,8 @@ export default function AddLiquidityPage() {
   const { writeContract, data: txHash, isPending, error: writeError, reset } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
-  const amountAWei = amountA ? parseUnits(amountA, 18) : BigInt(0);
-  const amountBWei = amountB ? parseUnits(amountB, 18) : BigInt(0);
+  const amountAWei = amountA && parseFloat(amountA) > 0 ? parseUnits(amountA, 18) : BigInt(0);
+  const amountBWei = amountB && parseFloat(amountB) > 0 ? parseUnits(amountB, 18) : BigInt(0);
   const needsApproveA = !allowanceA || (allowanceA as bigint) < amountAWei;
   const needsApproveB = baseToken !== WETH_ADDRESS && (!allowanceB || (allowanceB as bigint) < amountBWei);
 
