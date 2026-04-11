@@ -197,24 +197,42 @@ export default function AddLiquidityPage() {
     if (!studentToken || !baseToken || !address || !amountA || !amountB) return;
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
     const slippage = BigInt(95);
-    writeContract({
-      address: UNISWAP_V2_ROUTER,
-      abi: routerAbi,
-      functionName: "addLiquidity",
-      args: [
-        studentToken as `0x${string}`,
-        baseToken as `0x${string}`,
-        amountAWei,
-        amountBWei,
-        (amountAWei * slippage) / BigInt(100),
-        (amountBWei * slippage) / BigInt(100),
-        address,
-        deadline,
-      ],
-      chain: sepolia,
-      account: address,
-    });
-    setStep("done");
+    if (baseToken === WETH_ADDRESS) {
+      writeContract({
+        address: UNISWAP_V2_ROUTER,
+        abi: routerAbi,
+        functionName: "addLiquidityETH",
+        args: [
+          studentToken as `0x${string}`,
+          amountAWei,
+          (amountAWei * slippage) / BigInt(100),
+          (amountBWei * slippage) / BigInt(100),
+          address,
+          deadline,
+        ],
+        value: amountBWei,
+        chain: sepolia,
+        account: address,
+      });
+    } else {
+      writeContract({
+        address: UNISWAP_V2_ROUTER,
+        abi: routerAbi,
+        functionName: "addLiquidity",
+        args: [
+          studentToken as `0x${string}`,
+          baseToken as `0x${string}`,
+          amountAWei,
+          amountBWei,
+          (amountAWei * slippage) / BigInt(100),
+          (amountBWei * slippage) / BigInt(100),
+          address,
+          deadline,
+        ],
+        chain: sepolia,
+        account: address,
+      });
+    }
   }
 
   const selectedToken = tokens.find((t) => t.token === studentToken);

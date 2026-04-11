@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import "./globals.css";
 import Providers from "./providers";
 
@@ -54,7 +55,10 @@ export default function RootLayout({
                   <span className="text-xl font-bold text-blue-600">StudSWAP</span>
                   <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">Sepolia</span>
                 </Link>
-                <Nav />
+                <div className="flex items-center gap-4">
+                  <Nav />
+                  <ConnectButton />
+                </div>
               </div>
             </header>
             <main className="flex-1">{children}</main>
