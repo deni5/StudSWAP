@@ -122,6 +122,7 @@ export default function SwapPage() {
   const [tokenOut, setTokenOut] = useState("");
   const [amountIn, setAmountIn] = useState("");
   const [slippage, setSlippage] = useState("0.5");
+  const [useMultiHop, setUseMultiHop] = useState(false);
 
   const { data: allTokens } = useReadContract({
     address: STUDENT_TOKEN_REGISTRY_ADDRESS,
@@ -138,14 +139,44 @@ export default function SwapPage() {
 
   const amountInWei = amountIn && tokenIn && parseFloat(amountIn) > 0 ? parseUnits(amountIn, 18) : BigInt(0);
 
+  const directPath = tokenIn && tokenOut
+    ? [tokenIn as `0x${string}`, tokenOut as `0x${string}`]
+    : undefined;
+
+  const multiHopPath = tokenIn && tokenOut && tokenIn !== WETH_ADDRESS && tokenOut !== WETH_ADDRESS
+    ? [tokenIn as `0x${string}`, WETH_ADDRESS as `0x${string}`, tokenOut as `0x${string}`]
+    : undefined;
+
+  const swapPath = useMultiHop && multiHopPath ? multiHopPath : directPath;
+
   const { data: amountsOut } = useReadContract({
     address: UNISWAP_V2_ROUTER,
     abi: getAmountsOutAbi,
     functionName: "getAmountsOut",
-    args: amountInWei > BigInt(0) && tokenIn && tokenOut
-      ? [amountInWei, [tokenIn as `0x${string}`, tokenOut as `0x${string}`]]
+    args: amountInWei > BigInt(0) && swapPath
+      ? [amountInWei, swapPath]
       : undefined,
     query: { enabled: (amountInWei > BigInt(0) && !!tokenIn && !!tokenOut && tokenIn !== tokenOut) },
+  });
+
+  const { data: amountsOutDirect } = useReadContract({
+    address: UNISWAP_V2_ROUTER,
+    abi: getAmountsOutAbi,
+    functionName: "getAmountsOut",
+    args: amountInWei > BigInt(0) && directPath
+      ? [amountInWei, directPath]
+      : undefined,
+    query: { enabled: (amountInWei > BigInt(0) && !!tokenIn && !!tokenOut && tokenIn !== tokenOut && !useMultiHop) },
+  });
+
+  const { data: amountsOutMulti } = useReadContract({
+    address: UNISWAP_V2_ROUTER,
+    abi: getAmountsOutAbi,
+    functionName: "getAmountsOut",
+    args: amountInWei > BigInt(0) && multiHopPath
+      ? [amountInWei, multiHopPath]
+      : undefined,
+    query: { enabled: (amountInWei > BigInt(0) && !!multiHopPath && tokenIn !== tokenOut) },
   });
 
   const { data: allowance } = useReadContract({
@@ -169,7 +200,11 @@ export default function SwapPage() {
   const { writeContract, data: txHash, isPending, error: writeError } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
-  const estimatedOut = amountsOut ? (amountsOut as bigint[])[1] : undefined;
+  const directOut = amountsOutDirect ? (amountsOutDirect as bigint[])[(amountsOutDirect as bigint[]).length - 1] : undefined;
+  const multiOut = amountsOutMulti ? (amountsOutMulti as bigint[])[(amountsOutMulti as bigint[]).length - 1] : undefined;
+  const estimatedOut = useMultiHop
+    ? (amountsOut ? (amountsOut as bigint[])[(amountsOut as bigint[]).length - 1] : undefined)
+    : (amountsOut ? (amountsOut as bigint[])[(amountsOut as bigint[]).length - 1] : undefined);
   const needsApprove = tokenIn !== WETH_ADDRESS && (!allowance || (allowance as bigint) < amountInWei);
 
   const slippageBps = Math.floor(parseFloat(slippage) * 100);
@@ -192,6 +227,7 @@ export default function SwapPage() {
   function handleSwap() {
     if (!tokenIn || !tokenOut || !amountIn || !address) return;
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
+    const path = swapPath ?? [tokenIn as `0x${string}`, tokenOut as `0x${string}`];
     if (tokenIn === WETH_ADDRESS) {
       writeContract({
         address: UNISWAP_V2_ROUTER,
@@ -199,7 +235,7 @@ export default function SwapPage() {
         functionName: "swapExactETHForTokens",
         args: [
           amountOutMin,
-          [tokenIn as `0x${string}`, tokenOut as `0x${string}`],
+          path,
           address,
           deadline,
         ],
@@ -216,7 +252,7 @@ export default function SwapPage() {
         args: [
           amountInWei,
           amountOutMin,
-          [tokenIn as `0x${string}`, tokenOut as `0x${string}`],
+          path,
           address,
           deadline,
         ],
@@ -232,7 +268,7 @@ export default function SwapPage() {
         args: [
           amountInWei,
           amountOutMin,
-          [tokenIn as `0x${string}`, tokenOut as `0x${string}`],
+          path,
           address,
           deadline,
         ],
@@ -330,6 +366,30 @@ export default function SwapPage() {
             />
           </div>
         </div>
+
+        {multiHopPath && (
+          <div className="rounded-xl bg-slate-50 p-3 text-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-slate-600 font-medium">Multi-hop routing</p>
+                <p className="text-slate-400 text-xs mt-0.5">
+                  {useMultiHop
+                    ? "Via WETH: " + tokenInLabel + " → WETH → " + tokenOutLabel
+                    : "Direct path (may fail if no direct pool)"}
+                </p>
+              </div>
+              <button
+                onClick={() => setUseMultiHop(!useMultiHop)}
+                className={"rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors " + (useMultiHop ? "bg-blue-600 text-white" : "bg-slate-200 text-slate-600")}
+              >
+                {useMultiHop ? "Multi-hop ON" : "Enable"}
+              </button>
+            </div>
+            {multiOut && !useMultiHop && directOut === undefined && (
+              <p className="text-amber-600 text-xs mt-2">No direct pool found. Try enabling multi-hop.</p>
+            )}
+          </div>
+        )}
 
         {estimatedOut && amountOutMin > BigInt(0) && (
           <div className="rounded-xl bg-slate-50 p-3 text-sm space-y-1">
