@@ -19,7 +19,7 @@ import {
 
 const UNISWAP_V2_ROUTER = "0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3" as const;
 
-const routerAbi = [
+const swapTokensForTokensAbi = [
   {
     type: "function",
     name: "swapExactTokensForTokens",
@@ -33,6 +33,9 @@ const routerAbi = [
     ],
     outputs: [{ name: "amounts", type: "uint256[]" }],
   },
+] as const;
+
+const getAmountsOutAbi = [
   {
     type: "function",
     name: "getAmountsOut",
@@ -73,6 +76,9 @@ const erc20Abi = [
     inputs: [{ name: "account", type: "address" }],
     outputs: [{ name: "", type: "uint256" }],
   },
+] as const;
+
+const swapETHForTokensAbi = [
   {
     type: "function",
     name: "swapExactETHForTokens",
@@ -85,6 +91,9 @@ const erc20Abi = [
     ],
     outputs: [{ name: "amounts", type: "uint256[]" }],
   },
+] as const;
+
+const swapTokensForETHAbi = [
   {
     type: "function",
     name: "swapExactTokensForETH",
@@ -131,7 +140,7 @@ export default function SwapPage() {
 
   const { data: amountsOut } = useReadContract({
     address: UNISWAP_V2_ROUTER,
-    abi: routerAbi,
+    abi: getAmountsOutAbi,
     functionName: "getAmountsOut",
     args: amountInWei > BigInt(0) && tokenIn && tokenOut
       ? [amountInWei, [tokenIn as `0x${string}`, tokenOut as `0x${string}`]]
@@ -186,7 +195,7 @@ export default function SwapPage() {
     if (tokenIn === WETH_ADDRESS) {
       writeContract({
         address: UNISWAP_V2_ROUTER,
-        abi: routerAbi,
+        abi: swapETHForTokensAbi,
         functionName: "swapExactETHForTokens",
         args: [
           amountOutMin,
@@ -201,7 +210,7 @@ export default function SwapPage() {
     } else if (tokenOut === WETH_ADDRESS) {
       writeContract({
         address: UNISWAP_V2_ROUTER,
-        abi: routerAbi,
+        abi: swapTokensForETHAbi,
         functionName: "swapExactTokensForETH",
         args: [
           amountInWei,
@@ -216,7 +225,7 @@ export default function SwapPage() {
     } else {
       writeContract({
         address: UNISWAP_V2_ROUTER,
-        abi: routerAbi,
+        abi: swapTokensForTokensAbi,
         functionName: "swapExactTokensForTokens",
         args: [
           amountInWei,
