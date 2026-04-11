@@ -21,7 +21,9 @@ type RegistryToken = {
 };
 
 export default function TokensPage() {
-  const { tokens, isLoading } = useTokenRegistry();
+  const { allTokensQuery } = useTokenRegistry();
+  const tokens = allTokensQuery.data;
+  const isLoading = allTokensQuery.isLoading;
 
   const activeTokens = (tokens as RegistryToken[] | undefined)?.filter((t) => t.exists) ?? [];
 
