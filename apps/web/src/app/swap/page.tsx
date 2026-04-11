@@ -73,6 +73,31 @@ const erc20Abi = [
     inputs: [{ name: "account", type: "address" }],
     outputs: [{ name: "", type: "uint256" }],
   },
+  {
+    type: "function",
+    name: "swapExactETHForTokens",
+    stateMutability: "payable",
+    inputs: [
+      { name: "amountOutMin", type: "uint256" },
+      { name: "path", type: "address[]" },
+      { name: "to", type: "address" },
+      { name: "deadline", type: "uint256" },
+    ],
+    outputs: [{ name: "amounts", type: "uint256[]" }],
+  },
+  {
+    type: "function",
+    name: "swapExactTokensForETH",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "amountIn", type: "uint256" },
+      { name: "amountOutMin", type: "uint256" },
+      { name: "path", type: "address[]" },
+      { name: "to", type: "address" },
+      { name: "deadline", type: "uint256" },
+    ],
+    outputs: [{ name: "amounts", type: "uint256[]" }],
+  },
 ] as const;
 
 type TokenRecord = {
@@ -136,7 +161,7 @@ export default function SwapPage() {
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
   const estimatedOut = amountsOut ? (amountsOut as bigint[])[1] : undefined;
-  const needsApprove = !allowance || (allowance as bigint) < amountInWei;
+  const needsApprove = tokenIn !== WETH_ADDRESS && (!allowance || (allowance as bigint) < amountInWei);
 
   const slippageBps = Math.floor(parseFloat(slippage) * 100);
   const amountOutMin = estimatedOut
@@ -158,20 +183,52 @@ export default function SwapPage() {
   function handleSwap() {
     if (!tokenIn || !tokenOut || !amountIn || !address) return;
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
-    writeContract({
-      address: UNISWAP_V2_ROUTER,
-      abi: routerAbi,
-      functionName: "swapExactTokensForTokens",
-      args: [
-        amountInWei,
-        amountOutMin,
-        [tokenIn as `0x${string}`, tokenOut as `0x${string}`],
-        address,
-        deadline,
-      ],
-      chain: sepolia,
-      account: address,
-    });
+    if (tokenIn === WETH_ADDRESS) {
+      writeContract({
+        address: UNISWAP_V2_ROUTER,
+        abi: routerAbi,
+        functionName: "swapExactETHForTokens",
+        args: [
+          amountOutMin,
+          [tokenIn as `0x${string}`, tokenOut as `0x${string}`],
+          address,
+          deadline,
+        ],
+        value: amountInWei,
+        chain: sepolia,
+        account: address,
+      });
+    } else if (tokenOut === WETH_ADDRESS) {
+      writeContract({
+        address: UNISWAP_V2_ROUTER,
+        abi: routerAbi,
+        functionName: "swapExactTokensForETH",
+        args: [
+          amountInWei,
+          amountOutMin,
+          [tokenIn as `0x${string}`, tokenOut as `0x${string}`],
+          address,
+          deadline,
+        ],
+        chain: sepolia,
+        account: address,
+      });
+    } else {
+      writeContract({
+        address: UNISWAP_V2_ROUTER,
+        abi: routerAbi,
+        functionName: "swapExactTokensForTokens",
+        args: [
+          amountInWei,
+          amountOutMin,
+          [tokenIn as `0x${string}`, tokenOut as `0x${string}`],
+          address,
+          deadline,
+        ],
+        chain: sepolia,
+        account: address,
+      });
+    }
   }
 
   function handleSwitch() {
