@@ -204,6 +204,7 @@ export default function SwapPage() {
           deadline,
         ],
         value: amountInWei,
+        gas: BigInt(300000),
         chain: sepolia,
         account: address,
       });
@@ -219,6 +220,7 @@ export default function SwapPage() {
           address,
           deadline,
         ],
+        gas: BigInt(300000),
         chain: sepolia,
         account: address,
       });
@@ -234,6 +236,7 @@ export default function SwapPage() {
           address,
           deadline,
         ],
+        gas: BigInt(300000),
         chain: sepolia,
         account: address,
       });
