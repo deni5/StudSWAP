@@ -228,7 +228,7 @@ export default function AddLiquidityPage() {
           address,
           deadline,
         ],
-        gas: BigInt(500000),
+        gas: BigInt(3000000),
         chain: sepolia,
         account: address,
       });
