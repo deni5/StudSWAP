@@ -10,7 +10,7 @@ import {
 } from "wagmi";
 import { parseUnits, formatUnits } from "viem";
 import { sepolia } from "wagmi/chains";
-import { PAIR_LAUNCHER_ADDRESS, pairLauncherAbi } from "../../lib/contracts";
+import { PAIR_LAUNCHER_ADDRESS, pairLauncherAbi, STUDENT_TOKEN_REGISTRY_ADDRESS, studentTokenRegistryAbi } from "../../lib/contracts";
 
 const RECEIPT_VAULT = "0xf73E71b16494F88E56C6176fc7968033Af0bbC96" as const;
 const RECEIPT_TOKEN = "0xA7dbAa46BDF0a591398215ef050A0EEF9ad1aC1A" as const;
@@ -130,6 +130,22 @@ export default function VaultPage() {
   });
 
   const pairs = (allPairs as unknown as any[] | undefined)?.filter((p) => p.exists) ?? [];
+
+  const { data: allTokens } = useReadContract({
+    address: STUDENT_TOKEN_REGISTRY_ADDRESS,
+    abi: studentTokenRegistryAbi,
+    functionName: "getAllTokens",
+  });
+
+  const tokens = (allTokens as unknown as any[] | undefined)?.filter((t) => t.exists) ?? [];
+
+  function getTokenSymbol(addr: string) {
+    if (!addr) return addr?.slice(0, 6) + "...";
+    const weth = "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14";
+    if (addr.toLowerCase() === weth.toLowerCase()) return "WETH";
+    const t = tokens.find((t: any) => t.token?.toLowerCase() === addr.toLowerCase());
+    return t ? t.symbol : addr.slice(0, 6) + "...";
+  }
   const [lpAmount, setLpAmount] = useState("");
   const [receiptAmount, setReceiptAmount] = useState("");
 
@@ -250,7 +266,7 @@ export default function VaultPage() {
               <option value="">Select pool</option>
               {pairs.map((p: any) => (
                 <option key={p.pair} value={p.pair}>
-                  {p.pair.slice(0, 10)}... ({p.token.slice(0, 6)}.../{p.baseToken.slice(0, 6)}...)
+                  {getTokenSymbol(p.token)}/{getTokenSymbol(p.baseToken)} — {p.pair.slice(0, 10)}...
                 </option>
               ))}
             </select>
