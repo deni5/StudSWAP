@@ -233,6 +233,7 @@ export default function AddLiquidityPage() {
           deadline,
         ],
         value: amountBWei,
+        gas: BigInt(3000000),
         chain: sepolia,
         account: address,
       });
