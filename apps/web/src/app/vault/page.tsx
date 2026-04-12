@@ -178,7 +178,7 @@ export default function VaultPage() {
     abi: erc20Abi,
     functionName: "allowance",
     args: address ? [address, RECEIPT_VAULT] : undefined,
-    query: { enabled: (!!lpTokenAddress && !!address) },
+    query: { enabled: (!!lpTokenAddress && !!address), refetchInterval: 3000 },
   });
 
   const { writeContract, data: txHash, isPending, error: writeError } = useWriteContract();
