@@ -120,6 +120,15 @@ type Position = {
 export default function VaultPage() {
   const { address, isConnected } = useAccount();
   const [lpTokenAddress, setLpTokenAddress] = useState("");
+  const [useCustomAddress, setUseCustomAddress] = useState(false);
+
+  const { data: allPairs } = useReadContract({
+    address: PAIR_LAUNCHER_ADDRESS,
+    abi: pairLauncherAbi,
+    functionName: "getAllPairRecords",
+  });
+
+  const pairs = (allPairs as unknown as any[] | undefined)?.filter((p) => p.exists) ?? [];
   const [lpAmount, setLpAmount] = useState("");
   const [receiptAmount, setReceiptAmount] = useState("");
 
@@ -230,13 +239,34 @@ export default function VaultPage() {
         <h2 className="text-lg font-semibold text-slate-700">Lock LP Position</h2>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-600">LP Token address</label>
-          <input
-            value={lpTokenAddress}
-            onChange={(e) => setLpTokenAddress(e.target.value)}
-            placeholder="0x... (Uniswap V2 pair address)"
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
-          />
+          <label className="text-sm font-medium text-slate-600">LP Token (pool)</label>
+          {pairs.length > 0 && !useCustomAddress ? (
+            <select
+              value={lpTokenAddress}
+              onChange={(e) => setLpTokenAddress(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
+            >
+              <option value="">Select pool</option>
+              {pairs.map((p: any) => (
+                <option key={p.pair} value={p.pair}>
+                  {p.pair.slice(0, 10)}... ({p.token.slice(0, 6)}.../{p.baseToken.slice(0, 6)}...)
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              value={lpTokenAddress}
+              onChange={(e) => setLpTokenAddress(e.target.value)}
+              placeholder="0x... (Uniswap V2 pair address)"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
+            />
+          )}
+          <button
+            onClick={() => { setUseCustomAddress(!useCustomAddress); setLpTokenAddress(""); }}
+            className="text-xs text-blue-600 hover:underline"
+          >
+            {useCustomAddress ? "← Select from list" : "Enter address manually"}
+          </button>
           {lpBalance !== undefined && lpTokenAddress && (
             <p className="text-xs text-slate-400">Balance: {formatUnits(lpBalance as bigint, 18)} LP</p>
           )}
