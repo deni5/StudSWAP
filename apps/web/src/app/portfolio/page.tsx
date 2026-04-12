@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useReadContract, useReadContracts } from "wagmi";
+import { useAccount, useReadContract, useReadContracts, useBalance } from "wagmi";
 import { formatUnits } from "viem";
 import Link from "next/link";
 import {
@@ -91,6 +91,7 @@ type VaultPosition = {
 
 export default function PortfolioPage() {
   const { address, isConnected } = useAccount();
+  const { data: ethBalance } = useBalance({ address: address, query: { enabled: !!address } });
 
   const { data: allTokens } = useReadContract({
     address: STUDENT_TOKEN_REGISTRY_ADDRESS,
@@ -199,6 +200,15 @@ export default function PortfolioPage() {
                 <p className="text-sm text-slate-400">No registered tokens.</p>
               ) : (
                 <div className="space-y-3">
+                  {ethBalance && (
+                    <div className="rounded-xl bg-slate-50 p-4">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-slate-800">ETH</span>
+                        <span className="text-slate-600">{parseFloat(ethBalance.formatted).toFixed(4)}</span>
+                      </div>
+                      <p className="mt-1 text-xs text-slate-400">SepoliaETH</p>
+                    </div>
+                  )}
                   {tokens.map((token, i) => {
                     const bal = tokenBalances?.[i]?.result as bigint | undefined;
                     return (

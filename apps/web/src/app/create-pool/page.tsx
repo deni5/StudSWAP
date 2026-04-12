@@ -65,7 +65,7 @@ export default function CreatePoolPage() {
 
   const selectedToken = tokens.find((t) => t.token === studentToken);
   const baseTokenLabel = baseToken === WETH_ADDRESS
-    ? "Sepolia WETH"
+    ? "SepoliaETH"
     : tokens.find((t) => t.token === baseToken)?.symbol ?? baseToken;
   const canCreate = isConnected && !!studentToken && !!baseToken && !pairExists && !isPending && !isConfirming;
 
@@ -106,7 +106,7 @@ export default function CreatePoolPage() {
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
             >
               <option value="">Select base token</option>
-              <option value={WETH_ADDRESS}>Sepolia WETH</option>
+              <option value={WETH_ADDRESS}>SepoliaETH</option>
               {tokens.filter((t) => t.token !== studentToken).map((t) => (
                 <option key={t.token} value={t.token}>{t.title} ({t.symbol})</option>
               ))}

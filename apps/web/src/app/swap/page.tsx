@@ -140,7 +140,7 @@ export default function SwapPage() {
   const tokens = (allTokens as unknown as TokenRecord[] | undefined)?.filter((t) => t.exists) ?? [];
 
   const allOptions = [
-    { token: WETH_ADDRESS, symbol: "WETH", title: "Sepolia WETH" },
+    { token: WETH_ADDRESS, symbol: "ETH", title: "SepoliaETH" },
     ...tokens.map((t) => ({ token: t.token, symbol: t.symbol, title: t.title })),
   ];
 

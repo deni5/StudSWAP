@@ -236,7 +236,7 @@ export default function AddLiquidityPage() {
   }
 
   const selectedToken = tokens.find((t) => t.token === studentToken);
-  const baseTokenLabel = baseToken === WETH_ADDRESS ? "Sepolia WETH" : tokens.find((t) => t.token === baseToken)?.symbol ?? baseToken;
+  const baseTokenLabel = baseToken === WETH_ADDRESS ? "SepoliaETH" : tokens.find((t) => t.token === baseToken)?.symbol ?? baseToken;
   const pairExists = pairAddress && pairAddress !== "0x0000000000000000000000000000000000000000";
 
   return (
@@ -288,7 +288,7 @@ export default function AddLiquidityPage() {
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
             >
               <option value="">Select base token</option>
-              <option value={WETH_ADDRESS}>Sepolia WETH</option>
+              <option value={WETH_ADDRESS}>SepoliaETH</option>
               {tokens.filter((t) => t.token !== studentToken).map((t) => (
                 <option key={t.token} value={t.token}>{t.title} ({t.symbol})</option>
               ))}
