@@ -142,7 +142,7 @@ export default function VaultPage() {
   function getTokenSymbol(addr: string) {
     if (!addr) return addr?.slice(0, 6) + "...";
     const weth = "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14";
-    if (addr.toLowerCase() === weth.toLowerCase()) return "WETH";
+    if (addr.toLowerCase() === weth.toLowerCase()) return "SepoliaETH";
     const t = tokens.find((t: any) => t.token?.toLowerCase() === addr.toLowerCase());
     return t ? t.symbol : addr.slice(0, 6) + "...";
   }
