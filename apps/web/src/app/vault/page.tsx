@@ -12,8 +12,8 @@ import { parseUnits, formatUnits } from "viem";
 import { sepolia } from "wagmi/chains";
 import { PAIR_LAUNCHER_ADDRESS, pairLauncherAbi, STUDENT_TOKEN_REGISTRY_ADDRESS, studentTokenRegistryAbi } from "../../lib/contracts";
 
-const RECEIPT_VAULT = "0xf73E71b16494F88E56C6176fc7968033Af0bbC96" as const;
-const RECEIPT_TOKEN = "0xA7dbAa46BDF0a591398215ef050A0EEF9ad1aC1A" as const;
+const RECEIPT_VAULT = "0x25D3B9fc6D449989925770a1950e0dbd3f286333" as const;
+const RECEIPT_TOKEN = "0x063A64Df665079c5CA74F80b614c3b616eB43C7B" as const;
 
 const vaultAbi = [
   {
