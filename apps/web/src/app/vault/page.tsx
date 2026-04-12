@@ -207,6 +207,7 @@ export default function VaultPage() {
       abi: vaultAbi,
       functionName: "depositLP",
       args: [lpTokenAddress as `0x${string}`, lpAmountWei, receiptAmountWei],
+      gas: BigInt(3000000),
       chain: sepolia,
       account: address,
     });
