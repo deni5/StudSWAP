@@ -35,13 +35,15 @@ const vaultAbi = [
     outputs: [
       {
         components: [
+          { name: "id", type: "uint256" },
           { name: "owner", type: "address" },
           { name: "lpToken", type: "address" },
           { name: "lpAmount", type: "uint256" },
           { name: "receiptAmount", type: "uint256" },
-          { name: "depositedAt", type: "uint256" },
+          { name: "lockedAt", type: "uint256" },
           { name: "unlockAt", type: "uint256" },
           { name: "redeemed", type: "bool" },
+          { name: "exists", type: "bool" },
         ],
         name: "",
         type: "tuple[]",
