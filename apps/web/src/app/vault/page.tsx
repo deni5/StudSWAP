@@ -10,6 +10,7 @@ import {
 } from "wagmi";
 import { parseUnits, formatUnits } from "viem";
 import { sepolia } from "wagmi/chains";
+import { PAIR_LAUNCHER_ADDRESS, pairLauncherAbi } from "../../lib/contracts";
 
 const RECEIPT_VAULT = "0xf73E71b16494F88E56C6176fc7968033Af0bbC96" as const;
 const RECEIPT_TOKEN = "0xA7dbAa46BDF0a591398215ef050A0EEF9ad1aC1A" as const;
