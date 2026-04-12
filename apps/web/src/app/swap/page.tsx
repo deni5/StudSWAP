@@ -144,6 +144,13 @@ export default function SwapPage() {
     ...tokens.map((t) => ({ token: t.token, symbol: t.symbol, title: t.title })),
   ];
 
+  const { data: decimalsIn } = useReadContract({
+    address: tokenIn as `0x${string}`,
+    abi: erc20Abi,
+    functionName: "decimals",
+    query: { enabled: (!!tokenIn && tokenIn !== WETH_ADDRESS) },
+  });
+  const tokenDecimals = (decimalsIn as number | undefined) ?? 18;
   const amountInWei = amountIn && tokenIn && parseFloat(amountIn) > 0 ? parseUnits(amountIn, tokenDecimals) : BigInt(0);
 
   const directPath = tokenIn && tokenOut
@@ -204,14 +211,7 @@ export default function SwapPage() {
     query: { enabled: (!!tokenIn && !!address) },
   });
 
-  const { data: decimalsIn } = useReadContract({
-    address: tokenIn as `0x${string}`,
-    abi: erc20Abi,
-    functionName: "decimals",
-    query: { enabled: (!!tokenIn && tokenIn !== WETH_ADDRESS) },
-  });
 
-  const tokenDecimals = (decimalsIn as number | undefined) ?? 18;
 
   const { writeContract, data: txHash, isPending, error: writeError } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });

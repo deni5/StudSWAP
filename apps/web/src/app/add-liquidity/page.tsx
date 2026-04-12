@@ -64,13 +64,6 @@ const routerAbi = [
 const erc20Abi = [
   {
     type: "function",
-    name: "decimals",
-    stateMutability: "view",
-    inputs: [],
-    outputs: [{ name: "", type: "uint8" }],
-  },
-  {
-    type: "function",
     name: "approve",
     stateMutability: "nonpayable",
     inputs: [
@@ -168,8 +161,8 @@ export default function AddLiquidityPage() {
   const { writeContract, data: txHash, isPending, error: writeError, reset } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
-  const amountAWei = amountA && parseFloat(amountA) > 0 ? parseUnits(amountA, tokenDecimalsA) : BigInt(0);
-  const amountBWei = amountB && parseFloat(amountB) > 0 ? parseUnits(amountB, tokenDecimalsB) : BigInt(0);
+  const amountAWei = amountA && parseFloat(amountA) > 0 ? parseUnits(amountA, 18) : BigInt(0);
+  const amountBWei = amountB && parseFloat(amountB) > 0 ? parseUnits(amountB, 18) : BigInt(0);
   const needsApproveA = !allowanceA || (allowanceA as bigint) < amountAWei;
   const needsApproveB = baseToken !== WETH_ADDRESS && (!allowanceB || (allowanceB as bigint) < amountBWei);
 
@@ -272,7 +265,7 @@ export default function AddLiquidityPage() {
               ))}
             </select>
             {balanceA !== undefined && (
-              <p className="text-xs text-slate-400">Balance: {formatUnits(balanceA as bigint, tokenDecimalsA)}</p>
+              <p className="text-xs text-slate-400">Balance: {formatUnits(balanceA as bigint, 18)}</p>
             )}
           </div>
 
@@ -301,7 +294,7 @@ export default function AddLiquidityPage() {
               ))}
             </select>
             {balanceB !== undefined && (
-              <p className="text-xs text-slate-400">Balance: {formatUnits(balanceB as bigint, tokenDecimalsB)}</p>
+              <p className="text-xs text-slate-400">Balance: {formatUnits(balanceB as bigint, 18)}</p>
             )}
           </div>
 
