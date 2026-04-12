@@ -21,6 +21,43 @@ export default function RegisterTokenPage() {
   const { registerToken, isRegisterPending } = useTokenRegistry();
 
   const [tokenAddress, setTokenAddress] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
+  async function uploadToPinata(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("pinataMetadata", JSON.stringify({ name: file.name }));
+    formData.append("pinataOptions", JSON.stringify({ cidVersion: 0 }));
+
+    const res = await fetch("https://api.pinata.cloud/pinning/pinFileToIPFS", {
+      method: "POST",
+      headers: {
+        pinata_api_key: process.env.NEXT_PUBLIC_PINATA_API_KEY!,
+        pinata_secret_api_key: process.env.NEXT_PUBLIC_PINATA_SECRET!,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) throw new Error("Upload failed");
+    const data = await res.json();
+    return "https://gateway.pinata.cloud/ipfs/" + data.IpfsHash;
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError("");
+    try {
+      const url = await uploadToPinata(file);
+      setLogoUrl(url);
+    } catch {
+      setUploadError("Upload failed. Try again.");
+    } finally {
+      setUploading(false);
+    }
+  }
   const [title, setTitle] = useState("");
   const [symbol, setSymbol] = useState("");
   const [description, setDescription] = useState("");
@@ -128,7 +165,29 @@ export default function RegisterTokenPage() {
           <Field label="Title" value={title} onChange={setTitle} placeholder="My Student Token" error={errors.title} />
           <Field label="Symbol" value={symbol} onChange={setSymbol} placeholder="MST" error={errors.symbol} />
           <Field label="Category" value={category} onChange={setCategory} placeholder="Education" error={errors.category} />
-          <Field label="Logo URL" value={logoUrl} onChange={setLogoUrl} placeholder="https://..." />
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-600">Logo</label>
+            <div className="flex gap-2 items-center">
+              <label className="cursor-pointer rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 hover:bg-slate-100 transition-colors">
+                {uploading ? "Uploading..." : "Upload image"}
+                <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" disabled={uploading} />
+              </label>
+              <span className="text-slate-400 text-xs">or</span>
+              <input
+                value={logoUrl}
+                onChange={(e) => setLogoUrl(e.target.value)}
+                placeholder="https://... or IPFS URL"
+                className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800 outline-none text-sm"
+              />
+            </div>
+            {uploadError && <p className="text-sm text-red-500">{uploadError}</p>}
+            {logoUrl && (
+              <div className="flex items-center gap-3 mt-2">
+                <img src={logoUrl} alt="Logo preview" className="w-12 h-12 rounded-full object-cover border border-slate-200" onError={(e) => (e.currentTarget.style.display = "none")} />
+                <p className="text-xs text-slate-400 break-all">{logoUrl}</p>
+              </div>
+            )}
+          </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-600">Base token</label>
             <select
