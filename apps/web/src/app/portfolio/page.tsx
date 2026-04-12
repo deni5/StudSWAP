@@ -10,7 +10,7 @@ import {
   pairLauncherAbi,
 } from "../../lib/contracts";
 
-const RECEIPT_VAULT = "0xf73E71b16494F88E56C6176fc7968033Af0bbC96" as const;
+const RECEIPT_VAULT = "0xf07e2FE7245509E2ECa06603e3CCb594264A37ff" as const;
 
 const vaultAbi = [
   {
