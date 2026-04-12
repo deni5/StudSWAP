@@ -64,6 +64,13 @@ const routerAbi = [
 const erc20Abi = [
   {
     type: "function",
+    name: "decimals",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint8" }],
+  },
+  {
+    type: "function",
     name: "approve",
     stateMutability: "nonpayable",
     inputs: [
@@ -161,8 +168,24 @@ export default function AddLiquidityPage() {
   const { writeContract, data: txHash, isPending, error: writeError, reset } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
 
-  const amountAWei = amountA && parseFloat(amountA) > 0 ? parseUnits(amountA, 18) : BigInt(0);
-  const amountBWei = amountB && parseFloat(amountB) > 0 ? parseUnits(amountB, 18) : BigInt(0);
+
+  const { data: decimalsA } = useReadContract({
+    address: studentToken as `0x${string}`,
+    abi: erc20Abi,
+    functionName: "decimals",
+    query: { enabled: !!studentToken },
+  });
+  const { data: decimalsB } = useReadContract({
+    address: baseToken as `0x${string}`,
+    abi: erc20Abi,
+    functionName: "decimals",
+    query: { enabled: (!!baseToken && baseToken !== WETH_ADDRESS) },
+  });
+  const tokenDecimalsA = (decimalsA as number | undefined) ?? 18;
+  const tokenDecimalsB = (decimalsB as number | undefined) ?? 18;
+
+  const amountAWei = amountA && parseFloat(amountA) > 0 ? parseUnits(amountA, tokenDecimalsA) : BigInt(0);
+  const amountBWei = amountB && parseFloat(amountB) > 0 ? parseUnits(amountB, tokenDecimalsB) : BigInt(0);
   const needsApproveA = !allowanceA || (allowanceA as bigint) < amountAWei;
   const needsApproveB = baseToken !== WETH_ADDRESS && (!allowanceB || (allowanceB as bigint) < amountBWei);
 
@@ -265,7 +288,7 @@ export default function AddLiquidityPage() {
               ))}
             </select>
             {balanceA !== undefined && (
-              <p className="text-xs text-slate-400">Balance: {formatUnits(balanceA as bigint, 18)}</p>
+              <p className="text-xs text-slate-400">Balance: {formatUnits(balanceA as bigint, tokenDecimalsA)}</p>
             )}
           </div>
 
@@ -294,7 +317,7 @@ export default function AddLiquidityPage() {
               ))}
             </select>
             {balanceB !== undefined && (
-              <p className="text-xs text-slate-400">Balance: {formatUnits(balanceB as bigint, 18)}</p>
+              <p className="text-xs text-slate-400">Balance: {formatUnits(balanceB as bigint, tokenDecimalsB)}</p>
             )}
           </div>
 
