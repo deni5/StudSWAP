@@ -13,7 +13,8 @@ const navItems = [
   { href: "/create-pool", label: "Create Pool" },
   { href: "/add-liquidity", label: "Add Liquidity" },
   { href: "/swap", label: "Swap" },
-  { href: "/vault", label: "Vault" },
+  { href: "/lending", label: "Lending" },
+    { href: "/vault", label: "Vault" },
   { href: "/portfolio", label: "Portfolio" },
 ];
 
