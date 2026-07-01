@@ -36,7 +36,7 @@ export default function LiquidatePage() {
   const collInfo = lendingAssets.find(a => a.address === collateral)!;
   const debtInfo  = lendingAssets.find(a => a.address === debtAsset)!;
 
-  // Позиція позичальника
+  // Borrower Position
   const { data: pos } = useReadContract({
     address: LENDING_CORE_ADDRESS,
     abi: lendingCoreAbi,
@@ -133,25 +133,25 @@ export default function LiquidatePage() {
       <header>
         <h1 className="text-3xl font-bold text-slate-800">Liquidate</h1>
         <p className="text-slate-500 mt-1">
-          Ліквідуйте нездорові позиції та отримайте 5% бонус від застави
+          Liquidate unhealthy positions and earn 5% bonus on seized collateral
         </p>
       </header>
 
       {/* Info */}
       <div className="rounded-2xl border border-blue-200 bg-blue-50 p-5 text-sm text-blue-700 space-y-1">
-        <p className="font-semibold">Як працює ліквідація:</p>
-        <p>1. Знайдіть позицію з HF {"<"} 1.0</p>
-        <p>2. Погасіть до 50% боргу позичальника (close factor)</p>
-        <p>3. Отримайте відповідну заставу + 5% бонус</p>
+        <p className="font-semibold">How liquidation works:</p>
+        <p>1. Find a position with HF {"<"} 1.0</p>
+        <p>2. Repay up to 50% of borrower debt (close factor)</p>
+        <p>3. Receive collateral + 5% bonus</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Search */}
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-5">
-          <h2 className="text-lg font-semibold text-slate-700">Пошук позиції</h2>
+          <h2 className="text-lg font-semibold text-slate-700">Search Position</h2>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">Адреса позичальника</label>
+            <label className="text-sm font-medium text-slate-600">Borrower address</label>
             <input
               value={borrower}
               onChange={e => { setBorrower(e.target.value); setSearched(false); }}
@@ -174,7 +174,7 @@ export default function LiquidatePage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">Актив боргу</label>
+            <label className="text-sm font-medium text-slate-600">Debt asset</label>
             <select
               value={debtAsset}
               onChange={e => setDebtAsset(e.target.value as `0x${string}`)}
@@ -191,7 +191,7 @@ export default function LiquidatePage() {
             disabled={!validBorrower}
             className="w-full rounded-xl bg-slate-800 py-3 font-semibold text-white disabled:opacity-40 hover:bg-slate-700"
           >
-            Знайти позицію
+            Search
           </button>
         </div>
 
@@ -199,7 +199,7 @@ export default function LiquidatePage() {
         <div className="space-y-4">
           {searched && p && (
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-              <h2 className="text-lg font-semibold text-slate-700">Позиція позичальника</h2>
+              <h2 className="text-lg font-semibold text-slate-700">Borrower Position</h2>
               <div className="space-y-3 text-sm">
                 <Row label="Застава">
                   {p.collateralAmount > 0
@@ -209,7 +209,7 @@ export default function LiquidatePage() {
                 <Row label="Борг">
                   {currentDebt > 0 ? currentDebt.toFixed(6) + " " + debtInfo.symbol : "—"}
                 </Row>
-                <Row label="Макс. погашення">
+                <Row label="Max repay">
                   {maxRepay > 0 ? maxRepay.toFixed(6) + " " + debtInfo.symbol : "—"}
                 </Row>
                 <Row label="Health Factor">
@@ -219,7 +219,7 @@ export default function LiquidatePage() {
                     </span>
                   ) : "—"}
                 </Row>
-                <Row label="Ліквідовувана">
+                <Row label="Liquidatable">
                   <span className={isLiquidatable ? "text-red-600 font-semibold" : "text-green-600"}>
                     {isLiquidatable ? "⚠️ Так" : "✓ Ні (HF ≥ 1.0)"}
                   </span>
@@ -230,11 +230,11 @@ export default function LiquidatePage() {
 
           {searched && isLiquidatable && (
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-              <h2 className="text-lg font-semibold text-slate-700">Ліквідація</h2>
+              <h2 className="text-lg font-semibold text-slate-700">Liquidation</h2>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-600">
-                  Сума погашення (макс. {maxRepay.toFixed(6)} {debtInfo.symbol})
+                  Repay amount (max {maxRepay.toFixed(6)} {debtInfo.symbol})
                 </label>
                 <input
                   type="number"
@@ -255,7 +255,7 @@ export default function LiquidatePage() {
 
               {repayAmt && (
                 <div className="rounded-xl bg-green-50 border border-green-200 p-3 text-sm text-green-700">
-                  Ви отримаєте ~{collateralToReceive} {collInfo.symbol} (борг + 5% бонус)
+                  You will receive ~{collateralToReceive} {collInfo.symbol} (борг + 5% бонус)
                 </div>
               )}
 
@@ -272,7 +272,7 @@ export default function LiquidatePage() {
                     disabled={!repayAmt || isBusy}
                     className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-blue-500"
                   >
-                    {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "1. Approve"}
+                    {isConfirming ? "Confirming..." : isPending ? "Signing..." : "1. Approve"}
                   </button>
                 )}
                 {!needsApprove && (
@@ -281,7 +281,7 @@ export default function LiquidatePage() {
                     disabled={!repayAmt || isBusy}
                     className="w-full rounded-xl bg-red-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-red-500"
                   >
-                    {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "2. Liquidate"}
+                    {isConfirming ? "Confirming..." : isPending ? "Signing..." : "2. Liquidate"}
                   </button>
                 )}
               </div>

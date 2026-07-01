@@ -113,18 +113,18 @@ export default function PositionsPage() {
     <div className="mx-auto max-w-5xl space-y-8 px-6 py-10">
       <header>
         <h1 className="text-3xl font-bold text-slate-800">My Positions</h1>
-        <p className="text-slate-500 mt-1">Активні позиції кредитування з Health Factor</p>
+        <p className="text-slate-500 mt-1">Active lending positions with Health Factor</p>
       </header>
 
       {!address && (
         <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-400">
-          Підключіть гаманець для перегляду позицій
+          Connect wallet to view positions
         </div>
       )}
 
       {address && activePositions.length === 0 && (
         <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-400">
-          Немає активних позицій. <a href="/lending/borrow" className="text-blue-600 hover:underline">Відкрити позицію →</a>
+          No active positions. <a href="/lending/borrow" className="text-blue-600 hover:underline">Open position →</a>
         </div>
       )}
 
@@ -141,7 +141,7 @@ export default function PositionsPage() {
                 <h2 className="text-lg font-semibold text-slate-800">
                   {coll.symbol} / {debt.symbol}
                 </h2>
-                <p className="text-sm text-slate-400">Застава / Борг</p>
+                <p className="text-sm text-slate-400">Collateral / Debt</p>
               </div>
               {hf && (
                 <div className="text-right">
@@ -155,19 +155,19 @@ export default function PositionsPage() {
 
             <div className="grid gap-3 md:grid-cols-3 text-sm">
               <div className="rounded-xl bg-slate-50 p-3">
-                <div className="text-slate-400 text-xs">Застава</div>
+                <div className="text-slate-400 text-xs">Collateral</div>
                 <div className="font-semibold text-slate-800 mt-1">
                   {parseFloat(formatUnits(pos.collateralAmount, 18)).toFixed(4)} {coll.symbol}
                 </div>
               </div>
               <div className="rounded-xl bg-slate-50 p-3">
-                <div className="text-slate-400 text-xs">Борг (з відсотками)</div>
+                <div className="text-slate-400 text-xs">Debt (with interest)</div>
                 <div className="font-semibold text-slate-800 mt-1">
                   {(currentDebt / 1e18).toFixed(6)} {debt.symbol}
                 </div>
               </div>
               <div className="rounded-xl bg-slate-50 p-3">
-                <div className="text-slate-400 text-xs">Відкрито</div>
+                <div className="text-slate-400 text-xs">Opened</div>
                 <div className="font-semibold text-slate-800 mt-1">
                   {new Date(Number(pos.openedAt) * 1000).toLocaleDateString()}
                 </div>
@@ -176,7 +176,7 @@ export default function PositionsPage() {
 
             {hfNum < 1.2 && hfNum > 0 && (
               <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-600">
-                ⚠️ HF нижче 1.2 — погасіть частину боргу щоб уникнути ліквідації
+                ⚠️ HF below 1.2 — repay some debt to avoid liquidation
               </div>
             )}
 
@@ -184,7 +184,7 @@ export default function PositionsPage() {
               <input
                 type="number"
                 min="0"
-                placeholder="Сума погашення"
+                placeholder="Repay amount"
                 value={repayAmounts[key] ?? ""}
                 onChange={e => setRepayAmounts(prev => ({ ...prev, [key]: e.target.value }))}
                 className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800"

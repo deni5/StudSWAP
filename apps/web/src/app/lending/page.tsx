@@ -58,8 +58,8 @@ export default function LendingPage() {
       <header className="space-y-2">
         <h1 className="text-3xl font-bold text-slate-800">Lending</h1>
         <p className="text-slate-500">
-          Децентралізоване кредитування під заставу студентських та тестових токенів.
-          Модель ризику на основі кореляційного аналізу цін.
+          Decentralized lending against student and test token collateral.
+          Risk model based on price correlation analysis.
         </p>
       </header>
 
@@ -67,18 +67,18 @@ export default function LendingPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Link href="/lending/supply" className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
           <h2 className="text-lg font-semibold text-slate-800">Supply Liquidity</h2>
-          <p className="text-sm text-slate-500 mt-1">Надайте ліквідність і заробляйте відсотки</p>
+          <p className="text-sm text-slate-500 mt-1">Provide liquidity and earn interest</p>
           <div className="mt-4 text-blue-600 font-semibold text-sm">Почати →</div>
         </Link>
         <Link href="/lending/borrow" className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
           <h2 className="text-lg font-semibold text-slate-800">Borrow</h2>
-          <p className="text-sm text-slate-500 mt-1">Позичте токени під заставу</p>
+          <p className="text-sm text-slate-500 mt-1">Borrow tokens against collateral</p>
           <div className="mt-4 text-blue-600 font-semibold text-sm">Почати →</div>
         </Link>
         <Link href="/lending/positions" className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
           <h2 className="text-lg font-semibold text-slate-800">My Positions</h2>
-          <p className="text-sm text-slate-500 mt-1">Керуйте своїми позиціями та HF</p>
-          <div className="mt-4 text-blue-600 font-semibold text-sm">Переглянути →</div>
+          <p className="text-sm text-slate-500 mt-1">Manage your positions and Health Factor</p>
+          <div className="mt-4 text-blue-600 font-semibold text-sm">View →</div>
         </Link>
       </div>
 
@@ -156,23 +156,23 @@ export default function LendingPage() {
 
       {/* Risk Model Info */}
       <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
-        <h3 className="font-semibold text-amber-800 mb-2">Модель ризику</h3>
+        <h3 className="font-semibold text-amber-800 mb-2">Risk Model</h3>
         <div className="grid gap-3 md:grid-cols-3 text-sm text-amber-700">
           <div>
-            <div className="font-medium">Кореляційний критерій</div>
-            <div className="text-xs mt-0.5">ρ_min = 0.40 — мінімальна кореляція пари для допуску</div>
+            <div className="font-medium">Correlation criterion</div>
+            <div className="text-xs mt-0.5">ρ_min = 0.40 — minimum pair correlation for admission</div>
           </div>
           <div>
-            <div className="font-medium">Квантиль просідання</div>
-            <div className="text-xs mt-0.5">δ_max = 15% — максимальне відносне падіння (VaR 5%)</div>
+            <div className="font-medium">Drawdown quantile</div>
+            <div className="text-xs mt-0.5">δ_max = 15% — max relative drawdown (VaR 5%)</div>
           </div>
           <div>
             <div className="font-medium">Guard threshold</div>
-            <div className="text-xs mt-0.5">γ ∈ [3%, 12%] — швидке блокування при різкому падінні</div>
+            <div className="text-xs mt-0.5">γ ∈ [3%, 12%] — fast block on sharp price drop</div>
           </div>
         </div>
         <Link href="/risk" className="mt-3 inline-block text-xs text-amber-700 underline">
-          Детальний Risk Dashboard →
+          Full Risk Dashboard →
         </Link>
       </div>
     </div>

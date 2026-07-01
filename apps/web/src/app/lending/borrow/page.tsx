@@ -76,7 +76,7 @@ export default function BorrowPage() {
     query: { enabled: !!address, refetchInterval: 5000 },
   });
 
-  // Ціна ліквідації
+  // Liquidation price
   const { data: liqPriceRay } = useReadContract({
     address: LENDING_CORE_ADDRESS,
     abi: lendingCoreAbi,
@@ -85,7 +85,7 @@ export default function BorrowPage() {
     query: { enabled: !!address, refetchInterval: 5000 },
   });
 
-  // Guard активний?
+  // Guard active?
   const { data: guardActive } = useReadContract({
     address: LENDING_CORE_ADDRESS,
     abi: lendingCoreAbi,
@@ -115,6 +115,8 @@ export default function BorrowPage() {
 
   const collAmtWei  = collAmount ? parseUnits(collAmount, 18) : BigInt(0);
   const needsApprove = !allowance || (allowance as bigint) < collAmtWei;
+  const hasCollBalance = collBalance !== undefined && (collBalance as bigint) >= collAmtWei && collAmtWei > BigInt(0);
+  const canProceed = hasCollBalance && !!collAmount;
 
   const hf = hfRay ? Number(hfRay as bigint) / Number(RAY) : null;
   const liqPrice = liqPriceRay ? Number(formatUnits(liqPriceRay as bigint, 18)) : null;
@@ -172,7 +174,7 @@ export default function BorrowPage() {
     <div className="mx-auto max-w-4xl space-y-8 px-6 py-10">
       <header>
         <h1 className="text-3xl font-bold text-slate-800">Borrow</h1>
-        <p className="text-slate-500 mt-1">Депонуйте заставу і отримайте позику</p>
+        <p className="text-slate-500 mt-1">Deposit collateral and borrow assets</p>
       </header>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -182,7 +184,7 @@ export default function BorrowPage() {
 
           {/* Collateral */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">Застава (Collateral)</label>
+            <label className="text-sm font-medium text-slate-600">Collateral</label>
             <select
               value={collateral}
               onChange={e => { setCollateral(e.target.value as `0x${string}`); setStep("approve"); }}
@@ -202,14 +204,14 @@ export default function BorrowPage() {
               min="0"
               value={collAmount}
               onChange={e => setCollAmount(e.target.value)}
-              placeholder="Кількість застави"
+              placeholder="Collateral amount"
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
             />
           </div>
 
           {/* Debt */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">Позика (Borrow)</label>
+            <label className="text-sm font-medium text-slate-600">Borrow</label>
             <select
               value={debtAsset}
               onChange={e => { setDebtAsset(e.target.value as `0x${string}`); setStep("approve"); }}
@@ -224,22 +226,27 @@ export default function BorrowPage() {
               min="0"
               value={borrowAmt}
               onChange={e => setBorrowAmt(e.target.value)}
-              placeholder="Кількість для позики"
+              placeholder="Borrow amount"
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
             />
           </div>
 
           {/* Guard warning */}
+          {collAmount && !hasCollBalance && (
+            <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-600">
+              Insufficient collateral balance
+            </div>
+          )}
           {guardActive && (
             <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-600">
-              ⚠️ Guard активний — різке падіння ціни застави. Нові позики заблоковані.
+              ⚠️ Guard active — sharp collateral price drop. New borrows are blocked.
             </div>
           )}
 
           {/* Pair not allowed */}
           {!allowed && cfg && (
             <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-sm text-amber-700">
-              Ця пара не допущена моделлю ризику (низька кореляція або висока волатильність)
+              This pair is rejected by the risk model (low correlation or high volatility)
             </div>
           )}
 
@@ -256,19 +263,19 @@ export default function BorrowPage() {
               {needsApprove && step === 'approve' && (
                 <button
                   onClick={handleApprove}
-                  disabled={!collAmount || isBusy}
+                  disabled={!canProceed || isBusy}
                   className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-blue-500"
                 >
-                  {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "1. Approve Collateral"}
+                  {isConfirming ? "Confirming..." : isPending ? "Signing..." : "1. Approve Collateral"}
                 </button>
               )}
               {(!needsApprove || step === 'deposit') && step !== 'borrow' && step !== 'done' && (
                 <button
                   onClick={handleDeposit}
-                  disabled={!collAmount || isBusy}
+                  disabled={!canProceed || isBusy}
                   className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-blue-500"
                 >
-                  {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "2. Deposit Collateral"}
+                  {isConfirming ? "Confirming..." : isPending ? "Signing..." : "2. Deposit Collateral"}
                 </button>
               )}
               {step === 'borrow' && (
@@ -277,7 +284,7 @@ export default function BorrowPage() {
                   disabled={!borrowAmt || isBusy || !allowed}
                   className="w-full rounded-xl bg-green-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-green-500"
                 >
-                  {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "3. Borrow"}
+                  {isConfirming ? "Confirming..." : isPending ? "Signing..." : "3. Borrow"}
                 </button>
               )}
             </div>
@@ -288,7 +295,7 @@ export default function BorrowPage() {
               onClick={() => { setStep("approve"); setTxMsg(""); setBorrowAmt(""); setCollAmount(""); }}
               className="w-full rounded-xl border border-slate-200 py-3 font-semibold text-slate-600 hover:bg-slate-50"
             >
-              Нова позиція
+              New position
             </button>
           )}
         </div>
@@ -296,34 +303,34 @@ export default function BorrowPage() {
         {/* Position Preview */}
         <div className="space-y-4">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-slate-700">Параметри пари</h2>
+            <h2 className="text-lg font-semibold text-slate-700">Pair Parameters</h2>
             <div className="space-y-3 text-sm">
-              <Row label="Пара">{collAsset.symbol} / {debtAst.symbol}</Row>
-              <Row label="Допущена">
+              <Row label="Pair">{collAsset.symbol} / {debtAst.symbol}</Row>
+              <Row label="Allowed">
                 <span className={allowed ? "text-green-600" : "text-red-500"}>
                   {allowed ? "✓ Так" : "✗ Ні"}
                 </span>
               </Row>
-              <Row label="Ефективний LTV">{ltvBps ? (ltvBps / 100).toFixed(2) + "%" : "—"}</Row>
+              <Row label="Effective LTV">{ltvBps ? (ltvBps / 100).toFixed(2) + "%" : "—"}</Row>
               <Row label="Liquidation Threshold">{ltBps ? (ltBps / 100).toFixed(2) + "%" : "—"}</Row>
               <Row label="Guard threshold">{guardBps ? (guardBps / 100).toFixed(2) + "%" : "—"}</Row>
             </div>
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-slate-700">Моя позиція</h2>
+            <h2 className="text-lg font-semibold text-slate-700">My Position</h2>
             <div className="space-y-3 text-sm">
               <Row label="Health Factor">
                 <span className={"font-bold text-lg " + hfColor(hf)}>
                   {hf && hf < 999 ? hf.toFixed(3) : "—"}
                 </span>
               </Row>
-              <Row label="Ціна ліквідації">
+              <Row label="Liquidation price">
                 {liqPrice && liqPrice > 0
                   ? liqPrice.toFixed(6) + " " + debtAst.symbol + "/" + collAsset.symbol
                   : "—"}
               </Row>
-              <Row label="Guard активний">
+              <Row label="Guard active">
                 <span className={guardActive ? "text-red-600" : "text-green-600"}>
                   {guardActive ? "⚠️ Так" : "✓ Ні"}
                 </span>
@@ -332,7 +339,7 @@ export default function BorrowPage() {
 
             {hf && hf < 999 && hf < 1.5 && (
               <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-700">
-                HF нижче 1.5 — ризик ліквідації при падінні ціни застави
+                HF below 1.5 — liquidation risk if collateral price drops
               </div>
             )}
           </div>

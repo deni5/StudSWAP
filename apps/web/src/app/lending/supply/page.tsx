@@ -79,6 +79,8 @@ export default function SupplyPage() {
 
   const amountWei = amount ? parseUnits(amount, 18) : BigInt(0);
   const needsApprove = !allowance || (allowance as bigint) < amountWei;
+  const hasBalance = balance !== undefined && (balance as bigint) >= amountWei && amountWei > BigInt(0);
+  const canProceed = hasBalance && !!amount;
 
   const m = market as any;
   const totalLiquidity = m ? parseFloat(formatUnits(m.totalLiquidityShares, 18)).toFixed(4) : "—";
@@ -121,13 +123,13 @@ export default function SupplyPage() {
     <div className="mx-auto max-w-4xl space-y-8 px-6 py-10">
       <header>
         <h1 className="text-3xl font-bold text-slate-800">Supply Liquidity</h1>
-        <p className="text-slate-500 mt-1">Надайте ліквідність і заробляйте відсотки від позичальників</p>
+        <p className="text-slate-500 mt-1">Provide liquidity and earn interest from borrowers</p>
       </header>
 
       <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-5">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-600">Актив</label>
+            <label className="text-sm font-medium text-slate-600">Asset</label>
             <select
               value={asset}
               onChange={e => { setAsset(e.target.value as `0x${string}`); setStep("approve"); setTxMsg(""); }}
@@ -147,7 +149,7 @@ export default function SupplyPage() {
               min="0"
               value={amount}
               onChange={e => setAmount(e.target.value)}
-              placeholder="Кількість"
+              placeholder="Amount"
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
             />
             <button
@@ -158,6 +160,11 @@ export default function SupplyPage() {
             </button>
           </div>
 
+          {amount && !hasBalance && (
+            <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-600">
+              Insufficient balance
+            </div>
+          )}
           {txMsg && (
             <div className="rounded-xl bg-green-50 border border-green-200 p-3 text-sm text-green-700">
               {txMsg}
@@ -169,19 +176,19 @@ export default function SupplyPage() {
               {needsApprove && (
                 <button
                   onClick={handleApprove}
-                  disabled={!amount || isBusy}
+                  disabled={!canProceed || isBusy}
                   className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-blue-500"
                 >
-                  {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "1. Approve"}
+                  {isConfirming ? "Confirming..." : isPending ? "Signing..." : "1. Approve"}
                 </button>
               )}
               {!needsApprove && (
                 <button
                   onClick={handleSupply}
-                  disabled={!amount || isBusy}
+                  disabled={!canProceed || isBusy}
                   className="w-full rounded-xl bg-green-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-green-500"
                 >
-                  {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "2. Supply"}
+                  {isConfirming ? "Confirming..." : isPending ? "Signing..." : "2. Supply"}
                 </button>
               )}
             </div>
@@ -192,7 +199,7 @@ export default function SupplyPage() {
               onClick={() => { setStep("approve"); setTxMsg(""); setAmount(""); }}
               className="w-full rounded-xl border border-slate-200 py-3 font-semibold text-slate-600 hover:bg-slate-50"
             >
-              Supply ще
+              Supply more
             </button>
           )}
         </div>
@@ -208,7 +215,7 @@ export default function SupplyPage() {
             </Row>
           </div>
           <div className="rounded-xl bg-blue-50 border border-blue-200 p-3 text-xs text-blue-700 mt-4">
-            Supply APR = Borrow APR × Utilization × (1 - reserve factor 10%)
+            Supply APR = Borrow APR × Utilization × (1 − reserve factor 10%)
           </div>
         </div>
       </div>
