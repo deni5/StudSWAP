@@ -308,7 +308,7 @@ export default function BorrowPage() {
               <Row label="Pair">{collAsset.symbol} / {debtAst.symbol}</Row>
               <Row label="Allowed">
                 <span className={allowed ? "text-green-600" : "text-red-500"}>
-                  {allowed ? "✓ Так" : "✗ Ні"}
+                  {allowed ? "✓ Yes" : "✗ No"}
                 </span>
               </Row>
               <Row label="Effective LTV">{ltvBps ? (ltvBps / 100).toFixed(2) + "%" : "—"}</Row>
@@ -332,7 +332,7 @@ export default function BorrowPage() {
               </Row>
               <Row label="Guard active">
                 <span className={guardActive ? "text-red-600" : "text-green-600"}>
-                  {guardActive ? "⚠️ Так" : "✓ Ні"}
+                  {guardActive ? "⚠️ Yes" : "✓ No"}
                 </span>
               </Row>
             </div>

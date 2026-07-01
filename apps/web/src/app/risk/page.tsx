@@ -52,10 +52,10 @@ export default function RiskDashboard() {
   const { data: rates } = useReadContracts({ contracts: rateCalls });
 
   function riskBadge(allowed: boolean, ltv: number) {
-    if (!allowed) return <span className="rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-xs font-medium">Відхилено</span>;
-    if (ltv >= 6000) return <span className="rounded-full bg-green-100 text-green-700 px-2 py-0.5 text-xs font-medium">Низький</span>;
-    if (ltv >= 4000) return <span className="rounded-full bg-amber-100 text-amber-700 px-2 py-0.5 text-xs font-medium">Середній</span>;
-    return <span className="rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-xs font-medium">Високий</span>;
+    if (!allowed) return <span className="rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-xs font-medium">Rejected</span>;
+    if (ltv >= 6000) return <span className="rounded-full bg-green-100 text-green-700 px-2 py-0.5 text-xs font-medium">Low</span>;
+    if (ltv >= 4000) return <span className="rounded-full bg-amber-100 text-amber-700 px-2 py-0.5 text-xs font-medium">Medium</span>;
+    return <span className="rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-xs font-medium">High</span>;
   }
 
   const allowedPairs  = pairData?.filter(p => (p.result as any)?.allowed).length ?? 0;
@@ -67,11 +67,11 @@ export default function RiskDashboard() {
         <div className="flex items-center gap-3">
           <h1 className="text-3xl font-bold text-slate-800">Risk Dashboard</h1>
           <span className="rounded-full bg-amber-100 text-amber-700 px-3 py-1 text-sm font-medium">
-            Для викладачів
+            For teachers
           </span>
         </div>
         <p className="text-slate-500">
-          Параметри ризику StudLending — модель на основі магістерської роботи Саніна М.О.
+          StudLending risk parameters — model based on thesis by Sanin M.O.
         </p>
       </header>
 
@@ -79,28 +79,28 @@ export default function RiskDashboard() {
       <div className="grid gap-4 md:grid-cols-4">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="text-2xl font-bold text-slate-800">{pairs.length}</div>
-          <div className="text-sm text-slate-400 mt-1">Всього пар</div>
+          <div className="text-sm text-slate-400 mt-1">Total pairs</div>
         </div>
         <div className="rounded-2xl border border-green-200 bg-green-50 p-5 shadow-sm">
           <div className="text-2xl font-bold text-green-700">{allowedPairs}</div>
-          <div className="text-sm text-green-600 mt-1">Допущено моделлю</div>
+          <div className="text-sm text-green-600 mt-1">Admitted by model</div>
         </div>
         <div className="rounded-2xl border border-red-200 bg-red-50 p-5 shadow-sm">
           <div className="text-2xl font-bold text-red-700">{rejectedPairs}</div>
-          <div className="text-sm text-red-600 mt-1">Відхилено (ρ {"<"} 0.40)</div>
+          <div className="text-sm text-red-600 mt-1">Rejected (ρ {"<"} 0.40)</div>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="text-2xl font-bold text-slate-800">{lendingAssets.length}</div>
-          <div className="text-sm text-slate-400 mt-1">Активних ринків</div>
+          <div className="text-sm text-slate-400 mt-1">Active markets</div>
         </div>
       </div>
 
       {/* Model Parameters */}
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-700 mb-4">Параметри моделі ризику</h2>
+        <h2 className="text-lg font-semibold text-slate-700 mb-4">Risk Model Parameters</h2>
         <div className="grid gap-4 md:grid-cols-3">
           <div>
-            <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Критерій допустимості</div>
+            <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Admissibility criterion</div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-slate-500">ρ_min (кореляція)</span><span className="font-mono font-semibold">0.40</span></div>
               <div className="flex justify-between"><span className="text-slate-500">δ_max (квантиль)</span><span className="font-mono font-semibold">15%</span></div>
@@ -109,16 +109,16 @@ export default function RiskDashboard() {
             </div>
           </div>
           <div>
-            <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Базові параметри LTV</div>
+            <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Base LTV parameters</div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-slate-500">LTV_base</span><span className="font-mono font-semibold">70%</span></div>
               <div className="flex justify-between"><span className="text-slate-500">LT_base</span><span className="font-mono font-semibold">80%</span></div>
               <div className="flex justify-between"><span className="text-slate-500">κ_min</span><span className="font-mono font-semibold">0.75</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">Ліквідаційний бонус</span><span className="font-mono font-semibold">5%</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">Liquidation bonus</span><span className="font-mono font-semibold">5%</span></div>
             </div>
           </div>
           <div>
-            <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Відсоткова модель</div>
+            <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Interest rate model</div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between"><span className="text-slate-500">r_0 (базова)</span><span className="font-mono font-semibold">2%</span></div>
               <div className="flex justify-between"><span className="text-slate-500">s_1 (нахил 1)</span><span className="font-mono font-semibold">8%</span></div>
@@ -132,18 +132,18 @@ export default function RiskDashboard() {
       {/* Pair Risk Matrix */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100">
-          <h2 className="text-lg font-semibold text-slate-700">Матриця ризику пар</h2>
+          <h2 className="text-lg font-semibold text-slate-700">Pair Risk Matrix</h2>
           <p className="text-xs text-slate-400 mt-0.5">
-            Ефективні параметри після застосування моделі кореляційного аналізу
+            Effective parameters after applying correlation analysis model
           </p>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead className="bg-slate-50 text-slate-500 border-b border-slate-100">
               <tr>
-                <th className="px-4 py-3 text-left font-medium">Застава</th>
-                <th className="px-4 py-3 text-left font-medium">Борг</th>
-                <th className="px-4 py-3 text-left font-medium">Ризик</th>
+                <th className="px-4 py-3 text-left font-medium">Collateral</th>
+                <th className="px-4 py-3 text-left font-medium">Debt</th>
+                <th className="px-4 py-3 text-left font-medium">Risk</th>
                 <th className="px-4 py-3 text-left font-medium">LTV eff.</th>
                 <th className="px-4 py-3 text-left font-medium">LT eff.</th>
                 <th className="px-4 py-3 text-left font-medium">Guard γ</th>
@@ -191,15 +191,15 @@ export default function RiskDashboard() {
       {/* Market States */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100">
-          <h2 className="text-lg font-semibold text-slate-700">Стан ринків</h2>
+          <h2 className="text-lg font-semibold text-slate-700">Market States</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead className="bg-slate-50 text-slate-500 border-b border-slate-100">
               <tr>
                 <th className="px-4 py-3 text-left font-medium">Актив</th>
-                <th className="px-4 py-3 text-left font-medium">Ліквідність</th>
-                <th className="px-4 py-3 text-left font-medium">Борг</th>
+                <th className="px-4 py-3 text-left font-medium">Liquidity</th>
+                <th className="px-4 py-3 text-left font-medium">Debt</th>
                 <th className="px-4 py-3 text-left font-medium">Utilization</th>
                 <th className="px-4 py-3 text-left font-medium">Borrow APR</th>
                 <th className="px-4 py-3 text-left font-medium">Borrow Index</th>
@@ -243,8 +243,8 @@ export default function RiskDashboard() {
       </div>
 
       <div className="text-xs text-slate-400 text-center">
-        Risk updater запускається щогодини. Параметри пар оновлюються на основі кореляційного аналізу цін.
-        Модель: магістерська робота Саніна М.О., КМА 2025.
+        Risk updater runs hourly. Pair parameters updated based on price correlation analysis.
+        Model: thesis by Sanin M.O., NaUKMA 2025.
       </div>
     </div>
   );

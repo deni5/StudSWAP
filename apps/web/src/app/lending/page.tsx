@@ -141,7 +141,7 @@ export default function LendingPage() {
                           Supply
                         </Link>
                         <Link href={"/lending/borrow?debt=" + asset.address}
-                          className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                          className="rounded-lg bg-rose-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-600">
                           Borrow
                         </Link>
                       </div>
