@@ -73,7 +73,8 @@ export default function LiquidatePage() {
   });
 
   const { writeContract, data: txHash, isPending } = useWriteContract();
-  const { isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+  const { isSuccess, isLoading: isConfirming } = useWaitForTransactionReceipt({ hash: txHash });
+  const isBusy = isPending || isConfirming;
 
   const p = pos as any;
   const m = market as any;
@@ -268,19 +269,19 @@ export default function LiquidatePage() {
                 {needsApprove && (
                   <button
                     onClick={handleApprove}
-                    disabled={!repayAmt || isPending}
+                    disabled={!repayAmt || isBusy}
                     className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-blue-500"
                   >
-                    {isPending ? "Очікування..." : "1. Approve"}
+                    {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "1. Approve"}
                   </button>
                 )}
                 {!needsApprove && (
                   <button
                     onClick={handleLiquidate}
-                    disabled={!repayAmt || isPending}
+                    disabled={!repayAmt || isBusy}
                     className="w-full rounded-xl bg-red-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-red-500"
                   >
-                    {isPending ? "Очікування..." : "2. Liquidate"}
+                    {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "2. Liquidate"}
                   </button>
                 )}
               </div>

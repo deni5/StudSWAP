@@ -95,7 +95,8 @@ export default function BorrowPage() {
   });
 
   const { writeContract, data: txHash, isPending } = useWriteContract();
-  const { isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+  const { isSuccess, isLoading: isConfirming } = useWaitForTransactionReceipt({ hash: txHash });
+  const isBusy = isPending || isConfirming;
 
   useEffect(() => {
     if (isSuccess) {
@@ -255,28 +256,28 @@ export default function BorrowPage() {
               {needsApprove && step === 'approve' && (
                 <button
                   onClick={handleApprove}
-                  disabled={!collAmount || isPending}
+                  disabled={!collAmount || isBusy}
                   className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-blue-500"
                 >
-                  {isPending ? "Очікування..." : "1. Approve Collateral"}
+                  {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "1. Approve Collateral"}
                 </button>
               )}
               {(!needsApprove || step === 'deposit') && step !== 'borrow' && step !== 'done' && (
                 <button
                   onClick={handleDeposit}
-                  disabled={!collAmount || isPending}
+                  disabled={!collAmount || isBusy}
                   className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-blue-500"
                 >
-                  {isPending ? "Очікування..." : "2. Deposit Collateral"}
+                  {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "2. Deposit Collateral"}
                 </button>
               )}
               {step === 'borrow' && (
                 <button
                   onClick={handleBorrow}
-                  disabled={!borrowAmt || isPending || !allowed}
+                  disabled={!borrowAmt || isBusy || !allowed}
                   className="w-full rounded-xl bg-green-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-green-500"
                 >
-                  {isPending ? "Очікування..." : "3. Borrow"}
+                  {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "3. Borrow"}
                 </button>
               )}
             </div>

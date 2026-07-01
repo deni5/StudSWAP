@@ -66,7 +66,8 @@ export default function SupplyPage() {
   });
 
   const { writeContract, data: txHash, isPending } = useWriteContract();
-  const { isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+  const { isSuccess, isLoading: isConfirming } = useWaitForTransactionReceipt({ hash: txHash });
+  const isBusy = isPending || isConfirming;
 
   useEffect(() => {
     if (isSuccess) {
@@ -95,7 +96,7 @@ export default function SupplyPage() {
       address: asset,
       abi: erc20Abi,
       functionName: "approve",
-      args: [LENDING_CORE_ADDRESS, amountWei],
+      args: [LENDING_CORE_ADDRESS, BigInt("115792089237316195423570985008687907853269984665640564039457584007913129639935")], // max uint256
       chain: sepolia,
       account: address!,
       gas: BigInt(100000),
@@ -168,19 +169,19 @@ export default function SupplyPage() {
               {needsApprove && (
                 <button
                   onClick={handleApprove}
-                  disabled={!amount || isPending}
+                  disabled={!amount || isBusy}
                   className="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-blue-500"
                 >
-                  {isPending ? "Очікування..." : "1. Approve"}
+                  {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "1. Approve"}
                 </button>
               )}
               {!needsApprove && (
                 <button
                   onClick={handleSupply}
-                  disabled={!amount || isPending}
+                  disabled={!amount || isBusy}
                   className="w-full rounded-xl bg-green-600 py-3 font-semibold text-white disabled:opacity-40 hover:bg-green-500"
                 >
-                  {isPending ? "Очікування..." : "2. Supply"}
+                  {isConfirming ? "Підтвердження..." : isPending ? "Підпис..." : "2. Supply"}
                 </button>
               )}
             </div>
