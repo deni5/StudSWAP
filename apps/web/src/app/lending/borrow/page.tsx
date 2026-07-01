@@ -191,7 +191,7 @@ export default function BorrowPage() {
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
             >
               {lendingAssets.map(a => (
-                <option key={a.address} value={a.address}>{a.symbol} — {a.name}</option>
+                <option key={a.address} value={a.address}>{a.symbol} - {a.name}</option>
               ))}
             </select>
             {collBalance !== undefined && (
@@ -218,7 +218,7 @@ export default function BorrowPage() {
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
             >
               {lendingAssets.filter(a => a.address !== collateral).map(a => (
-                <option key={a.address} value={a.address}>{a.symbol} — {a.name}</option>
+                <option key={a.address} value={a.address}>{a.symbol} - {a.name}</option>
               ))}
             </select>
             <input
@@ -239,7 +239,7 @@ export default function BorrowPage() {
           )}
           {guardActive && (
             <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-600">
-              ⚠️ Guard active — sharp collateral price drop. New borrows are blocked.
+              ⚠️ Guard active - sharp collateral price drop. New borrows are blocked.
             </div>
           )}
 
@@ -311,9 +311,9 @@ export default function BorrowPage() {
                   {allowed ? "✓ Yes" : "✗ No"}
                 </span>
               </Row>
-              <Row label="Effective LTV">{ltvBps ? (ltvBps / 100).toFixed(2) + "%" : "—"}</Row>
-              <Row label="Liquidation Threshold">{ltBps ? (ltBps / 100).toFixed(2) + "%" : "—"}</Row>
-              <Row label="Guard threshold">{guardBps ? (guardBps / 100).toFixed(2) + "%" : "—"}</Row>
+              <Row label="Effective LTV">{ltvBps ? (ltvBps / 100).toFixed(2) + "%" : "-"}</Row>
+              <Row label="Liquidation Threshold">{ltBps ? (ltBps / 100).toFixed(2) + "%" : "-"}</Row>
+              <Row label="Guard threshold">{guardBps ? (guardBps / 100).toFixed(2) + "%" : "-"}</Row>
             </div>
           </div>
 
@@ -322,13 +322,13 @@ export default function BorrowPage() {
             <div className="space-y-3 text-sm">
               <Row label="Health Factor">
                 <span className={"font-bold text-lg " + hfColor(hf)}>
-                  {hf && hf < 999 ? hf.toFixed(3) : "—"}
+                  {hf && hf < 999 ? hf.toFixed(3) : "-"}
                 </span>
               </Row>
               <Row label="Liquidation price">
                 {liqPrice && liqPrice > 0
                   ? liqPrice.toFixed(6) + " " + debtAst.symbol + "/" + collAsset.symbol
-                  : "—"}
+                  : "-"}
               </Row>
               <Row label="Guard active">
                 <span className={guardActive ? "text-red-600" : "text-green-600"}>
@@ -339,7 +339,7 @@ export default function BorrowPage() {
 
             {hf && hf < 999 && hf < 1.5 && (
               <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-700">
-                HF below 1.5 — liquidation risk if collateral price drops
+                HF below 1.5 - liquidation risk if collateral price drops
               </div>
             )}
           </div>

@@ -176,7 +176,7 @@ export default function PositionsPage() {
 
             {hfNum < 1.2 && hfNum > 0 && (
               <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-600">
-                ⚠️ HF below 1.2 — repay some debt to avoid liquidation
+                ⚠️ HF below 1.2 - repay some debt to avoid liquidation
               </div>
             )}
 

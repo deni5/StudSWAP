@@ -71,7 +71,7 @@ export default function RiskDashboard() {
           </span>
         </div>
         <p className="text-slate-500">
-          StudLending risk parameters — model based on thesis by Sanin M.O.
+          StudLending risk parameters - model based on thesis by Sanin M.O.
         </p>
       </header>
 
@@ -102,10 +102,10 @@ export default function RiskDashboard() {
           <div>
             <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Admissibility criterion</div>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-slate-500">ρ_min (кореляція)</span><span className="font-mono font-semibold">0.40</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">δ_max (квантиль)</span><span className="font-mono font-semibold">15%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">α (рівень VaR)</span><span className="font-mono font-semibold">5%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">W (вікно)</span><span className="font-mono font-semibold">90 днів</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">ρ_min (correlation)</span><span className="font-mono font-semibold">0.40</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">δ_max (quantile)</span><span className="font-mono font-semibold">15%</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">α (VaR level)</span><span className="font-mono font-semibold">5%</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">W (window)</span><span className="font-mono font-semibold">90 days</span></div>
             </div>
           </div>
           <div>
@@ -120,10 +120,10 @@ export default function RiskDashboard() {
           <div>
             <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Interest rate model</div>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-slate-500">r_0 (базова)</span><span className="font-mono font-semibold">2%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">s_1 (нахил 1)</span><span className="font-mono font-semibold">8%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">s_2 (нахил 2)</span><span className="font-mono font-semibold">30%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">U_k (перегин)</span><span className="font-mono font-semibold">80%</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">r_0 (base rate)</span><span className="font-mono font-semibold">2%</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">s_1 (slope 1)</span><span className="font-mono font-semibold">8%</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">s_2 (slope 2)</span><span className="font-mono font-semibold">30%</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">U_k (kink point)</span><span className="font-mono font-semibold">80%</span></div>
             </div>
           </div>
         </div>
@@ -163,10 +163,10 @@ export default function RiskDashboard() {
                     <td className="px-4 py-3 text-slate-700">{pair.debt.symbol}</td>
                     <td className="px-4 py-3">{riskBadge(cfg.allowed, cfg.effectiveLtvBps)}</td>
                     <td className="px-4 py-3 font-mono text-slate-700">
-                      {cfg.allowed ? (cfg.effectiveLtvBps / 100).toFixed(2) + "%" : "—"}
+                      {cfg.allowed ? (cfg.effectiveLtvBps / 100).toFixed(2) + "%" : "-"}
                     </td>
                     <td className="px-4 py-3 font-mono text-slate-700">
-                      {cfg.allowed ? (cfg.effectiveLiqThBps / 100).toFixed(2) + "%" : "—"}
+                      {cfg.allowed ? (cfg.effectiveLiqThBps / 100).toFixed(2) + "%" : "-"}
                     </td>
                     <td className="px-4 py-3 font-mono text-slate-700">
                       {(cfg.guardThresholdBps / 100).toFixed(2)}%
@@ -213,7 +213,7 @@ export default function RiskDashboard() {
                 const debt = Number(m.totalScaledDebt) * Number(m.borrowIndexRay) / Number(RAY);
                 const total = debt + Number(m.totalLiquidityShares);
                 const util = total > 0 ? (debt / total * 100).toFixed(1) : "0.0";
-                const apr = r ? (Number(r) / Number(RAY) * 100).toFixed(2) : "—";
+                const apr = r ? (Number(r) / Number(RAY) * 100).toFixed(2) : "-";
                 const idx = (Number(m.borrowIndexRay) / Number(RAY)).toFixed(6);
                 return (
                   <tr key={asset.address} className="border-t border-slate-100 hover:bg-slate-50">

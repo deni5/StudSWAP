@@ -89,10 +89,10 @@ export default function LiquidatePage() {
   const repayWei = repayAmt ? parseUnits(repayAmt, 18) : BigInt(0);
   const needsApprove = !allowance || (allowance as bigint) < repayWei;
 
-  // Bonus 5% — скільки застави отримає ліквідатор
+  // Bonus 5% - скільки застави отримає ліквідатор
   const collateralToReceive = repayAmt && hf
     ? (parseFloat(repayAmt) * 1.05).toFixed(6)
-    : "—";
+    : "-";
 
   function handleApprove() {
     if (!repayAmt) return;
@@ -204,20 +204,20 @@ export default function LiquidatePage() {
                 <Row label="Застава">
                   {p.collateralAmount > 0
                     ? parseFloat(formatUnits(p.collateralAmount, 18)).toFixed(4) + " " + collInfo.symbol
-                    : "—"}
+                    : "-"}
                 </Row>
                 <Row label="Борг">
-                  {currentDebt > 0 ? currentDebt.toFixed(6) + " " + debtInfo.symbol : "—"}
+                  {currentDebt > 0 ? currentDebt.toFixed(6) + " " + debtInfo.symbol : "-"}
                 </Row>
                 <Row label="Max repay">
-                  {maxRepay > 0 ? maxRepay.toFixed(6) + " " + debtInfo.symbol : "—"}
+                  {maxRepay > 0 ? maxRepay.toFixed(6) + " " + debtInfo.symbol : "-"}
                 </Row>
                 <Row label="Health Factor">
                   {hf !== null ? (
                     <span className={"font-bold text-xl " + hfColor(hf)}>
                       {hf.toFixed(3)}
                     </span>
-                  ) : "—"}
+                  ) : "-"}
                 </Row>
                 <Row label="Liquidatable">
                   <span className={isLiquidatable ? "text-red-600 font-semibold" : "text-green-600"}>

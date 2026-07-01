@@ -83,7 +83,7 @@ export default function SupplyPage() {
   const canProceed = hasBalance && !!amount;
 
   const m = market as any;
-  const totalLiquidity = m ? parseFloat(formatUnits(m.totalLiquidityShares, 18)).toFixed(4) : "—";
+  const totalLiquidity = m ? parseFloat(formatUnits(m.totalLiquidityShares, 18)).toFixed(4) : "-";
   const totalDebt = m ? Number(m.totalScaledDebt) * Number(m.borrowIndexRay) / Number(RAY) : 0;
   const total = m ? totalDebt + Number(m.totalLiquidityShares) : 0;
   const utilPct = total > 0 ? (totalDebt / total * 100).toFixed(1) : "0.0";
@@ -136,7 +136,7 @@ export default function SupplyPage() {
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-800"
             >
               {lendingAssets.map(a => (
-                <option key={a.address} value={a.address}>{a.symbol} — {a.name}</option>
+                <option key={a.address} value={a.address}>{a.symbol} - {a.name}</option>
               ))}
             </select>
             {balance !== undefined && (
