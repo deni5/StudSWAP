@@ -215,6 +215,7 @@ export default function SwapPage() {
 
   const { writeContract, data: txHash, isPending, error: writeError } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+  const isBusy = isPending || isConfirming;
 
   const directOut = amountsOutDirect ? (amountsOutDirect as bigint[])[(amountsOutDirect as bigint[]).length - 1] : undefined;
   const multiOut = amountsOutMulti ? (amountsOutMulti as bigint[])[(amountsOutMulti as bigint[]).length - 1] : undefined;

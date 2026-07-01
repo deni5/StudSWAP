@@ -185,6 +185,7 @@ export default function VaultPage() {
 
   const { writeContract, data: txHash, isPending, error: writeError } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+  const isBusy = isPending || isConfirming;
 
   const lpAmountWei = lpAmount ? parseUnits(lpAmount, 18) : BigInt(0);
   const receiptAmountWei = receiptAmount ? parseUnits(receiptAmount, 18) : BigInt(0);

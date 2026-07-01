@@ -167,6 +167,7 @@ export default function AddLiquidityPage() {
 
   const { writeContract, data: txHash, isPending, error: writeError, reset } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+  const isBusy = isPending || isConfirming;
 
 
   const { data: decimalsA } = useReadContract({
