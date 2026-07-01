@@ -16,6 +16,7 @@ const navItems = [
   { href: "/lending", label: "Lending" },
     { href: "/vault", label: "Vault" },
   { href: "/portfolio", label: "Portfolio" },
+    { href: "/risk", label: "Risk" },
 ];
 
 function Nav() {
