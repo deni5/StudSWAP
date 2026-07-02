@@ -59,15 +59,32 @@ function stdDev(arr: number[]): number {
 
 // ── Отримання цін ───────────────────────────────────────────────────
 
-async function getChainlinkPrice(feedAddr: string): Promise<number> {
-  const feed = await ethers.getContractAt(
-    ["function latestRoundData() view returns (uint80,int256,uint256,uint256,uint80)",
-     "function decimals() view returns (uint8)"],
-    feedAddr
-  );
-  const [, answer] = await feed.latestRoundData();
-  const dec = await feed.decimals();
-  return Number(answer) / 10 ** Number(dec);
+async function getChainlinkPrice(feedAddr: string, fallback: number): Promise<number> {
+  try {
+    const feed = await ethers.getContractAt(
+      ["function latestRoundData() view returns (uint80,int256,uint256,uint256,uint80)",
+       "function decimals() view returns (uint8)"],
+      feedAddr
+    );
+    const [, answer] = await feed.latestRoundData();
+    const dec = await feed.decimals();
+    return Number(answer) / 10 ** Number(dec);
+  } catch {
+    console.log(`Chainlink feed ${feedAddr.slice(0,10)} unavailable, using CoinGecko fallback`);
+    return fallback;
+  }
+}
+
+async function getCoinGeckoCurrentPrice(id: string): Promise<number> {
+  try {
+    const res = await fetch(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`
+    );
+    const data = await res.json();
+    return data[id].usd;
+  } catch {
+    return 0;
+  }
 }
 
 async function getCoinGeckoPrice(id: string): Promise<number> {
@@ -179,8 +196,10 @@ async function main() {
 
   // Крок 1 — отримуємо поточні ціни
   console.log("\n── Fetching prices ──");
-  const ethPrice  = await getChainlinkPrice("0x694AA1769357215DE4FAC081bf1f309aDC325306");
-  const btcPrice  = await getChainlinkPrice("0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43");
+  const ethCG = await getCoinGeckoCurrentPrice("ethereum");
+  const ethPrice  = await getChainlinkPrice("0x694AA1769357215DE4FAC081bf1f309aDC325306", ethCG);
+  const btcCG = await getCoinGeckoCurrentPrice("bitcoin");
+  const btcPrice  = await getChainlinkPrice("0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43", btcCG);
   const solPrice  = await getCoinGeckoPrice("solana");
   const trxPrice  = await getCoinGeckoPrice("tron");
 
@@ -210,16 +229,37 @@ async function main() {
   await mockTrx.updatePrice(BigInt(Math.round(trxPrice * 1e8)));
   console.log(`TRX feed updated: ${BigInt(Math.round(trxPrice * 1e8))}`);
 
-  // Крок 3 — генеруємо консервативні ряди для testnet
-  // (на Sepolia немає 90 днів історії — використовуємо синтетичні ряди)
-  const n = 30;
-  const makeNoisySeries = (base: number, vol: number) =>
-    Array.from({ length: n }, () => base * (1 + (Math.random() - 0.5) * vol));
+  // Крок 3 — реальні historical дані з CoinGecko (30 днів)
+  console.log("\n── Fetching historical price series ──");
 
-  const ethSeries  = makeNoisySeries(ethPrice, 0.03);
-  const btcSeries  = makeNoisySeries(btcPrice, 0.04);
-  const solSeries  = makeNoisySeries(solPrice, 0.06);
-  const trxSeries  = makeNoisySeries(trxPrice, 0.05);
+  async function fetchCoinGeckoHistory(id: string): Promise<number[]> {
+    try {
+      const res = await fetch(
+        `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=30&interval=daily`
+      );
+      const data = await res.json();
+      return (data.prices as [number, number][]).map(([, price]) => price);
+    } catch {
+      console.log(`CoinGecko history failed for ${id}, using fallback`);
+      return [];
+    }
+  }
+
+  const [ethHistory, btcHistory, solHistory, trxHistory] = await Promise.all([
+    fetchCoinGeckoHistory("ethereum"),
+    fetchCoinGeckoHistory("bitcoin"),
+    fetchCoinGeckoHistory("solana"),
+    fetchCoinGeckoHistory("tron"),
+  ]);
+
+  // Вирівнюємо довжини рядів
+  const minLen = Math.min(ethHistory.length, btcHistory.length, solHistory.length, trxHistory.length);
+  console.log(`Historical series length: ${minLen} days`);
+
+  const ethSeries = ethHistory.slice(-minLen);
+  const btcSeries = btcHistory.slice(-minLen);
+  const solSeries = solHistory.slice(-minLen);
+  const trxSeries = trxHistory.slice(-minLen);
 
   // Крок 4 — формуємо пари і рахуємо параметри
   console.log("\n── Computing pair params ──");
