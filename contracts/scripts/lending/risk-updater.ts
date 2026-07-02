@@ -238,18 +238,58 @@ async function main() {
         `https://api.coingecko.com/api/v3/coins/${id}/market_chart?vs_currency=usd&days=30&interval=daily`
       );
       const data = await res.json();
+      if (!data.prices) throw new Error("No prices");
       return (data.prices as [number, number][]).map(([, price]) => price);
     } catch {
-      console.log(`CoinGecko history failed for ${id}, using fallback`);
+      console.log(`CoinGecko history failed for ${id}`);
       return [];
     }
   }
 
+  // Binance klines — відкритий API без ключів
+  const BINANCE_SYMBOLS: Record<string, string> = {
+    "ethereum": "ETHUSDT",
+    "bitcoin":  "BTCUSDT",
+    "solana":   "SOLUSDT",
+    "tron":     "TRXUSDT",
+  };
+
+  async function fetchBinanceHistory(id: string): Promise<number[]> {
+    const symbol = BINANCE_SYMBOLS[id];
+    if (!symbol) return [];
+    try {
+      const res = await fetch(
+        `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1d&limit=31`
+      );
+      const data = await res.json() as any[][];
+      // close price — індекс 4
+      return data.map((k: any[]) => parseFloat(k[4]));
+    } catch {
+      console.log(`Binance history failed for ${symbol}`);
+      return [];
+    }
+  }
+
+  async function fetchPriceHistory(id: string): Promise<number[]> {
+    const cg = await fetchCoinGeckoHistory(id);
+    if (cg.length > 5) {
+      console.log(`  ${id}: CoinGecko OK (${cg.length} days)`);
+      return cg;
+    }
+    const bn = await fetchBinanceHistory(id);
+    if (bn.length > 5) {
+      console.log(`  ${id}: Binance OK (${bn.length} days)`);
+      return bn;
+    }
+    console.log(`  ${id}: using synthetic fallback`);
+    return [];
+  }
+
   const [ethHistory, btcHistory, solHistory, trxHistory] = await Promise.all([
-    fetchCoinGeckoHistory("ethereum"),
-    fetchCoinGeckoHistory("bitcoin"),
-    fetchCoinGeckoHistory("solana"),
-    fetchCoinGeckoHistory("tron"),
+    fetchPriceHistory("ethereum"),
+    fetchPriceHistory("bitcoin"),
+    fetchPriceHistory("solana"),
+    fetchPriceHistory("tron"),
   ]);
 
   // Вирівнюємо довжини рядів
