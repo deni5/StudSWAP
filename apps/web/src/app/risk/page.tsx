@@ -102,28 +102,28 @@ export default function RiskDashboard() {
           <div>
             <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Admissibility criterion</div>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-slate-500">ρ_min (correlation)</span><span className="font-mono font-semibold">0.40</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">δ_max (quantile)</span><span className="font-mono font-semibold">15%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">α (VaR level)</span><span className="font-mono font-semibold">5%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">W (window)</span><span className="font-mono font-semibold">90 days</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">ρ_min (correlation)</span><span className="font-mono font-semibold text-right">0.40</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">δ_max (quantile)</span><span className="font-mono font-semibold text-right">15%</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">α (VaR level)</span><span className="font-mono font-semibold text-right">5%</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">W (window)</span><span className="font-mono font-semibold text-right">90 days</span></div>
             </div>
           </div>
           <div>
             <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Base LTV parameters</div>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-slate-500">LTV_base</span><span className="font-mono font-semibold">70%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">LT_base</span><span className="font-mono font-semibold">80%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">κ_min</span><span className="font-mono font-semibold">0.75</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">Liquidation bonus</span><span className="font-mono font-semibold">5%</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">LTV_base</span><span className="font-mono font-semibold text-right">70%</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">LT_base</span><span className="font-mono font-semibold text-right">80%</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">κ_min</span><span className="font-mono font-semibold text-right">0.75</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">Liquidation bonus</span><span className="font-mono font-semibold text-right">5%</span></div>
             </div>
           </div>
           <div>
             <div className="text-xs text-slate-400 uppercase tracking-wide mb-2">Interest rate model</div>
             <div className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-slate-500">r_0 (base rate)</span><span className="font-mono font-semibold">2%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">s_1 (slope 1)</span><span className="font-mono font-semibold">8%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">s_2 (slope 2)</span><span className="font-mono font-semibold">30%</span></div>
-              <div className="flex justify-between"><span className="text-slate-500">U_k (kink point)</span><span className="font-mono font-semibold">80%</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">r_0 (base rate)</span><span className="font-mono font-semibold text-right">2%</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">s_1 (slope 1)</span><span className="font-mono font-semibold text-right">8%</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">s_2 (slope 2)</span><span className="font-mono font-semibold text-right">30%</span></div>
+              <div className="flex justify-between gap-4"><span className="text-slate-500 flex-1">U_k (kink point)</span><span className="font-mono font-semibold text-right">80%</span></div>
             </div>
           </div>
         </div>
