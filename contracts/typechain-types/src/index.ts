@@ -5,6 +5,8 @@ import type * as pairLauncherSol from "./PairLauncher.sol";
 export type { pairLauncherSol };
 import type * as receiptVaultSol from "./ReceiptVault.sol";
 export type { receiptVaultSol };
+import type * as lending from "./lending";
+export type { lending };
 export type { AllowedBaseTokens } from "./AllowedBaseTokens";
 export type { BonusReserveManager } from "./BonusReserveManager";
 export type { ReceiptToken } from "./ReceiptToken";

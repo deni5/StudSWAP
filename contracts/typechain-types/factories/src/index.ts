@@ -3,6 +3,7 @@
 /* eslint-disable */
 export * as pairLauncherSol from "./PairLauncher.sol";
 export * as receiptVaultSol from "./ReceiptVault.sol";
+export * as lending from "./lending";
 export { AllowedBaseTokens__factory } from "./AllowedBaseTokens__factory";
 export { BonusReserveManager__factory } from "./BonusReserveManager__factory";
 export { ReceiptToken__factory } from "./ReceiptToken__factory";

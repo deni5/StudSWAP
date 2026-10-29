@@ -14,6 +14,7 @@ const navItems = [
   { href: "/add-liquidity", label: "Add Liquidity" },
   { href: "/swap", label: "Swap" },
   { href: "/lending", label: "Lending" },
+  { href: "/leverage", label: "Leverage" },
     { href: "/vault", label: "Vault" },
   { href: "/portfolio", label: "Portfolio" },
     { href: "/risk", label: "Risk" },

@@ -14,6 +14,14 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "AccessControl",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AccessControl__factory>;
+    getContractFactory(
+      name: "IAccessControl",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IAccessControl__factory>;
+    getContractFactory(
       name: "Ownable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ownable__factory>;
@@ -42,6 +50,22 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
+      name: "ERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC165__factory>;
+    getContractFactory(
+      name: "IERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC165__factory>;
+    getContractFactory(
+      name: "Pausable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Pausable__factory>;
+    getContractFactory(
+      name: "ReentrancyGuard",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ReentrancyGuard__factory>;
+    getContractFactory(
       name: "AllowedBaseTokens",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AllowedBaseTokens__factory>;
@@ -49,6 +73,34 @@ declare module "hardhat/types/runtime" {
       name: "BonusReserveManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.BonusReserveManager__factory>;
+    getContractFactory(
+      name: "AggregatorV3Interface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AggregatorV3Interface__factory>;
+    getContractFactory(
+      name: "IPairRegistry",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPairRegistry__factory>;
+    getContractFactory(
+      name: "LendingCore",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LendingCore__factory>;
+    getContractFactory(
+      name: "AggregatorV3Interface",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AggregatorV3Interface__factory>;
+    getContractFactory(
+      name: "MockPriceFeed",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockPriceFeed__factory>;
+    getContractFactory(
+      name: "PairRegistry",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PairRegistry__factory>;
+    getContractFactory(
+      name: "StudToken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.StudToken__factory>;
     getContractFactory(
       name: "IAllowedBaseTokensLike",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -87,6 +139,16 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.StudentTokenRegistry__factory>;
 
     getContractAt(
+      name: "AccessControl",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AccessControl>;
+    getContractAt(
+      name: "IAccessControl",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IAccessControl>;
+    getContractAt(
       name: "Ownable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -122,6 +184,26 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
+      name: "ERC165",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC165>;
+    getContractAt(
+      name: "IERC165",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC165>;
+    getContractAt(
+      name: "Pausable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Pausable>;
+    getContractAt(
+      name: "ReentrancyGuard",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ReentrancyGuard>;
+    getContractAt(
       name: "AllowedBaseTokens",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -131,6 +213,41 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.BonusReserveManager>;
+    getContractAt(
+      name: "AggregatorV3Interface",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AggregatorV3Interface>;
+    getContractAt(
+      name: "IPairRegistry",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPairRegistry>;
+    getContractAt(
+      name: "LendingCore",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LendingCore>;
+    getContractAt(
+      name: "AggregatorV3Interface",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AggregatorV3Interface>;
+    getContractAt(
+      name: "MockPriceFeed",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockPriceFeed>;
+    getContractAt(
+      name: "PairRegistry",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PairRegistry>;
+    getContractAt(
+      name: "StudToken",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.StudToken>;
     getContractAt(
       name: "IAllowedBaseTokensLike",
       address: string | ethers.Addressable,
@@ -178,6 +295,14 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.StudentTokenRegistry>;
 
     deployContract(
+      name: "AccessControl",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AccessControl>;
+    deployContract(
+      name: "IAccessControl",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IAccessControl>;
+    deployContract(
       name: "Ownable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Ownable>;
@@ -206,6 +331,22 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20>;
     deployContract(
+      name: "ERC165",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC165>;
+    deployContract(
+      name: "IERC165",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC165>;
+    deployContract(
+      name: "Pausable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Pausable>;
+    deployContract(
+      name: "ReentrancyGuard",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReentrancyGuard>;
+    deployContract(
       name: "AllowedBaseTokens",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AllowedBaseTokens>;
@@ -213,6 +354,34 @@ declare module "hardhat/types/runtime" {
       name: "BonusReserveManager",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BonusReserveManager>;
+    deployContract(
+      name: "AggregatorV3Interface",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AggregatorV3Interface>;
+    deployContract(
+      name: "IPairRegistry",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IPairRegistry>;
+    deployContract(
+      name: "LendingCore",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LendingCore>;
+    deployContract(
+      name: "AggregatorV3Interface",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AggregatorV3Interface>;
+    deployContract(
+      name: "MockPriceFeed",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockPriceFeed>;
+    deployContract(
+      name: "PairRegistry",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PairRegistry>;
+    deployContract(
+      name: "StudToken",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.StudToken>;
     deployContract(
       name: "IAllowedBaseTokensLike",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -251,6 +420,16 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.StudentTokenRegistry>;
 
     deployContract(
+      name: "AccessControl",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AccessControl>;
+    deployContract(
+      name: "IAccessControl",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IAccessControl>;
+    deployContract(
       name: "Ownable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -286,6 +465,26 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20>;
     deployContract(
+      name: "ERC165",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC165>;
+    deployContract(
+      name: "IERC165",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC165>;
+    deployContract(
+      name: "Pausable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Pausable>;
+    deployContract(
+      name: "ReentrancyGuard",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReentrancyGuard>;
+    deployContract(
       name: "AllowedBaseTokens",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -295,6 +494,41 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.BonusReserveManager>;
+    deployContract(
+      name: "AggregatorV3Interface",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AggregatorV3Interface>;
+    deployContract(
+      name: "IPairRegistry",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IPairRegistry>;
+    deployContract(
+      name: "LendingCore",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.LendingCore>;
+    deployContract(
+      name: "AggregatorV3Interface",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.AggregatorV3Interface>;
+    deployContract(
+      name: "MockPriceFeed",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockPriceFeed>;
+    deployContract(
+      name: "PairRegistry",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PairRegistry>;
+    deployContract(
+      name: "StudToken",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.StudToken>;
     deployContract(
       name: "IAllowedBaseTokensLike",
       args: any[],
