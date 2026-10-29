@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { TokenLogo } from "../../components/TokenLogo";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import {
@@ -16,6 +17,7 @@ type TokenRecord = {
   token: string;
   title: string;
   symbol: string;
+  logoUrl: string;
   exists: boolean;
 };
 
@@ -156,7 +158,7 @@ export default function CreatePoolPage() {
           <h2 className="text-lg font-semibold text-slate-700">Pair preview</h2>
           <div className="rounded-xl bg-slate-50 p-4 text-sm space-y-2">
             <p className="text-slate-400">Token A</p>
-            <p className="font-medium text-slate-800">{selectedToken ? selectedToken.title + " (" + selectedToken.symbol + ")" : "—"}</p>
+            <div className="flex items-center gap-2">{selectedToken && <TokenLogo logoUrl={selectedToken.logoUrl} symbol={selectedToken.symbol} size={22} />}<p className="font-medium text-slate-800">{selectedToken ? selectedToken.title + " (" + selectedToken.symbol + ")" : "—"}</p></div>
             <p className="text-slate-400 mt-3">Token B</p>
             <p className="font-medium text-slate-800">{baseToken ? baseTokenLabel : "—"}</p>
           </div>

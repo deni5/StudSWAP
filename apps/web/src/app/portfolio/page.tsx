@@ -3,6 +3,7 @@
 import { useAccount, useReadContract, useReadContracts, useBalance } from "wagmi";
 import { formatUnits } from "viem";
 import Link from "next/link";
+import { TokenLogo } from "../../components/TokenLogo";
 import {
   STUDENT_TOKEN_REGISTRY_ADDRESS,
   PAIR_LAUNCHER_ADDRESS,
@@ -67,6 +68,7 @@ type TokenRecord = {
   token: string;
   title: string;
   symbol: string;
+  logoUrl: string;
   exists: boolean;
 };
 
@@ -214,7 +216,7 @@ export default function PortfolioPage() {
                     return (
                       <div key={token.token} className="rounded-xl bg-slate-50 p-4">
                         <div className="flex items-center justify-between">
-                          <span className="font-medium text-slate-800">{token.symbol}</span>
+                          <div className="flex items-center gap-2"><TokenLogo logoUrl={token.logoUrl} symbol={token.symbol} size={24} /><span className="font-medium text-slate-800">{token.symbol}</span></div>
                           <span className="text-slate-600">{bal !== undefined ? formatUnits(bal, 18) : "..."}</span>
                         </div>
                         <p className="mt-1 text-xs text-slate-400">{token.title}</p>

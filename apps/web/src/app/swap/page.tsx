@@ -16,6 +16,7 @@ import {
   WETH_ADDRESS,
   studentTokenRegistryAbi,
 } from "../../lib/contracts";
+import { TokenLogo } from "../../components/TokenLogo";
 
 const UNISWAP_V2_ROUTER = "0xeE567Fe1712Faf6149d80dA1E6934E354124CfE3" as const;
 
@@ -120,6 +121,7 @@ type TokenRecord = {
   token: string;
   title: string;
   symbol: string;
+  logoUrl: string;
   exists: boolean;
 };
 
@@ -140,8 +142,8 @@ export default function SwapPage() {
   const tokens = (allTokens as unknown as TokenRecord[] | undefined)?.filter((t) => t.exists) ?? [];
 
   const allOptions = [
-    { token: WETH_ADDRESS, symbol: "", title: "SepoliaETH" },
-    ...tokens.map((t) => ({ token: t.token, symbol: t.symbol, title: t.title })),
+    { token: WETH_ADDRESS, symbol: "", title: "SepoliaETH", logoUrl: "" },
+    ...tokens.map((t) => ({ token: t.token, symbol: t.symbol, title: t.title, logoUrl: t.logoUrl })),
   ];
 
   const { data: decimalsIn } = useReadContract({
@@ -302,8 +304,10 @@ export default function SwapPage() {
     setAmountIn("");
   }
 
-  const tokenInLabel = allOptions.find((t) => t.token === tokenIn)?.symbol ?? "—";
-  const tokenOutLabel = allOptions.find((t) => t.token === tokenOut)?.symbol ?? "—";
+  const tokenInOpt = allOptions.find((t) => t.token === tokenIn);
+  const tokenInLabel = tokenInOpt?.symbol ?? "—";
+  const tokenOutOpt = allOptions.find((t) => t.token === tokenOut);
+  const tokenOutLabel = tokenOutOpt?.symbol ?? "—";
 
   return (
     <div className="mx-auto max-w-xl space-y-6 px-6 py-10">

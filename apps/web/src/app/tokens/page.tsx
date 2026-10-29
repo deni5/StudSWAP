@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { TokenLogo } from "../../components/TokenLogo";
 import { useTokenRegistry } from "../../hooks/useTokenRegistry";
 
 type RegistryToken = {
@@ -72,7 +73,7 @@ export default function TokensPage() {
               <tbody>
                 {activeTokens.map((token) => (
                   <tr key={token.token} className="border-t border-slate-100 hover:bg-slate-50 transition-colors">
-                    <td className="px-5 py-4 font-semibold text-slate-800">{token.symbol}</td>
+                    <td className="px-5 py-4"><div className="flex items-center gap-2"><TokenLogo logoUrl={token.logoUrl} symbol={token.symbol} size={28} /><span className="font-semibold text-slate-800">{token.symbol}</span></div></td>
                     <td className="px-5 py-4 text-slate-700">{token.title}</td>
                     <td className="px-5 py-4 font-mono text-xs text-slate-500">
                       {token.token.slice(0, 6)}...{token.token.slice(-4)}
