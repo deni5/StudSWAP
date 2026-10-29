@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   useAccount,
@@ -169,6 +169,12 @@ export default function AddLiquidityPage() {
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash: txHash });
   const isBusy = isPending || isConfirming;
 
+  useEffect(() => {
+    if (isSuccess && step === "add_liquidity") {
+      setStep("done");
+    }
+  }, [isSuccess, step]);
+
 
   const { data: decimalsA } = useReadContract({
     address: studentToken as `0x${string}`,
@@ -200,7 +206,7 @@ export default function AddLiquidityPage() {
       chain: sepolia,
       account: address,
     });
-    setStep("approve_b");
+    setStep("approve_a");
   }
 
   function handleApproveB() {
@@ -213,11 +219,12 @@ export default function AddLiquidityPage() {
       chain: sepolia,
       account: address,
     });
-    setStep("add_liquidity");
+    setStep("approve_b");
   }
 
   function handleAddLiquidity() {
     if (!studentToken || !baseToken || !address || !amountA || !amountB) return;
+    setStep("add_liquidity");
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
     const slippage = BigInt(95);
     if (baseToken === WETH_ADDRESS) {
@@ -394,6 +401,28 @@ export default function AddLiquidityPage() {
               </button>
             )}
 
+            {step === "done" && (
+              <div className="rounded-xl bg-green-50 border border-green-200 p-4 flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-semibold text-green-800">Пул поповнено!</p>
+                  <p className="text-sm text-green-700 mt-0.5">
+                    Ви успішно внесли {amountA} {selectedToken?.symbol} + {amountB} {baseTokenLabel} до пулу ліквідності. LP-токени зараховано на ваш гаманець.
+                  </p>
+                  {txHash && (
+                    <a href={"https://sepolia.etherscan.io/tx/" + txHash} target="_blank" rel="noopener noreferrer"
+                      className="text-xs text-green-600 underline mt-1 block">
+                      Переглянути транзакцію
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
             <Link href="/create-pool" className="block text-center rounded-xl border border-slate-200 px-5 py-3 font-semibold text-slate-600 hover:bg-slate-50">
               Back to Create Pool
             </Link>
@@ -434,7 +463,7 @@ export default function AddLiquidityPage() {
                 {needsApproveB ? "⏳ Approve Token B" : "✓ Token B approved"}
               </p>
             )}
-            <p className="text-slate-400">Add Liquidity</p>
+            <p className={step === "done" ? "text-green-600" : "text-slate-400"}>{step === "done" ? "✓ Ліквідність додано!" : "Add Liquidity"}</p>
           </div>
         </section>
       </div>
