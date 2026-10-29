@@ -175,7 +175,7 @@ export default function LeveragePage() {
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-slate-600">Collateral Token</label>
             <select value={collToken}
-              onChange={e => { setCollToken(e.target.value); setStep("approve"); reset(); }}
+              onChange={e => { setCollToken(e.target.value as `0x${string}`); setStep("approve"); reset(); }}
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
               {collateralAssets.map(a => (
                 <option key={a.address} value={a.address}>{a.name} ({a.symbol})</option>

@@ -30,7 +30,7 @@ function Nav() {
           <Link
             key={item.href}
             href={item.href}
-            className={"rounded-lg px-3 py-2 text-sm font-medium transition-colors " + (isActive
+            className={"rounded-lg px-2 py-1.5 text-xs font-medium transition-colors " + (isActive
               ? "bg-blue-50 text-blue-600 font-semibold"
               : "text-slate-600 hover:bg-slate-100 hover:text-slate-900")}
           >
