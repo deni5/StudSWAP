@@ -133,7 +133,7 @@ export default function AddLiquidityPage() {
     query: { enabled: (!!studentToken && !!baseToken) },
   });
 
-  const { data: allowanceA } = useReadContract({
+  const { data: allowanceA, refetch: refetchAllowanceA } = useReadContract({
     address: studentToken as `0x${string}`,
     abi: erc20Abi,
     functionName: "allowance",
@@ -141,7 +141,7 @@ export default function AddLiquidityPage() {
     query: { enabled: (!!studentToken && !!address) },
   });
 
-  const { data: allowanceB } = useReadContract({
+  const { data: allowanceB, refetch: refetchAllowanceB } = useReadContract({
     address: baseToken as `0x${string}`,
     abi: erc20Abi,
     functionName: "allowance",
@@ -170,10 +170,14 @@ export default function AddLiquidityPage() {
   const isBusy = isPending || isConfirming;
 
   useEffect(() => {
-    if (isSuccess && step === "add_liquidity") {
+    if (!isSuccess) return;
+    // Рефетч allowance після кожного апруву
+    refetchAllowanceA();
+    if (typeof refetchAllowanceB === "function") refetchAllowanceB();
+    if (step === "add_liquidity") {
       setStep("done");
     }
-  }, [isSuccess, step]);
+  }, [isSuccess]);
 
 
   const { data: decimalsA } = useReadContract({
