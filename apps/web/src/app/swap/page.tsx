@@ -152,7 +152,14 @@ export default function SwapPage() {
     functionName: "decimals",
     query: { enabled: (!!tokenIn && tokenIn !== WETH_ADDRESS) },
   });
-  const tokenDecimals = (decimalsIn as number | undefined) ?? 18;
+  const { data: decimalsOut } = useReadContract({
+    address: tokenOut as `0x${string}`,
+    abi: erc20Abi,
+    functionName: "decimals",
+    query: { enabled: (!!tokenOut && tokenOut !== WETH_ADDRESS) },
+  });
+  const tokenDecimals    = (decimalsIn  as number | undefined) ?? 18;
+  const tokenOutDecimals = (decimalsOut as number | undefined) ?? 18;
   const amountInWei = amountIn && tokenIn && parseFloat(amountIn) > 0 ? parseUnits(amountIn, tokenDecimals) : BigInt(0);
 
   const directPath = tokenIn && tokenOut
@@ -364,7 +371,7 @@ export default function SwapPage() {
             ))}
           </select>
           <div className="rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-slate-600">
-            {estimatedOut ? formatUnits(estimatedOut, 18) : "0.0"}
+            {estimatedOut ? formatUnits(estimatedOut, tokenOutDecimals) : "0.0"}
           </div>
         </div>
 
@@ -373,7 +380,7 @@ export default function SwapPage() {
             <p className="text-slate-400">Rate</p>
             <p className="font-medium text-slate-800 mt-1">
               {estimatedOut && amountIn
-                ? (parseFloat(formatUnits(estimatedOut, 18)) / parseFloat(amountIn)).toFixed(6) + " " + tokenOutLabel + "/" + tokenInLabel
+                ? (parseFloat(formatUnits(estimatedOut, tokenOutDecimals)) / parseFloat(amountIn)).toFixed(6) + " " + tokenOutLabel + "/" + tokenInLabel
                 : "—"}
             </p>
           </div>
@@ -415,7 +422,7 @@ export default function SwapPage() {
         {estimatedOut && amountOutMin > BigInt(0) && (
           <div className="rounded-xl bg-slate-50 p-3 text-sm space-y-1">
             <p className="text-slate-400">Minimum received</p>
-            <p className="font-medium text-slate-800">{formatUnits(amountOutMin, 18)} {tokenOutLabel}</p>
+            <p className="font-medium text-slate-800">{formatUnits(amountOutMin, tokenOutDecimals)} {tokenOutLabel}</p>
           </div>
         )}
 
